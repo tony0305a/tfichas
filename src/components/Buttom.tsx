@@ -14,7 +14,7 @@ export function Buttom({  children, asChild, ...props }: ButtomProps) {
     return (
         <Comp {...props} className={clsx(
 
-            'py-3 px-4 bg-cyan-500 rounded font-semibold text-black text-sm w-full transition-colors hover:bg-cyan-300 focus:ring-2 ring-white'
+            'py-3 px-4 m-4 bg-cyan-500 rounded font-semibold text-black text-sm w-full transition-colors hover:bg-cyan-300 focus:ring-2 ring-white'
 
         )}>{children}</Comp>
     )
