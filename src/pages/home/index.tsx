@@ -166,7 +166,7 @@ export const Home = () =>{
         {rolls.map((item:any,id:any)=>
             id>=1 ? (
 
-            <span key={id} className={id!=1?('text-md'):('text-md font-bold animate-bounce')}>
+            <span key={id} className={id!=1?('text-xs md:text-sm lg:text-base'):('text-xs md:text-sm lg:text-base font-bold animate-bounce')}>
               {"["}{item.time}{"]"}{item.name} {"->"} rolou {item.roll} {"| "}{item.text}{"|"}
               </span>
             
@@ -177,5 +177,4 @@ export const Home = () =>{
     </header>
     </div>
     )
-
 }
