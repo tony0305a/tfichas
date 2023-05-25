@@ -86,15 +86,17 @@ export const Home = () =>{
       <div className=' w-screen h-100 bg-grey-800' >
         <Text>Logado como: {localStorage.getItem("name")}</Text>
       </div>
-      <div className='flex flex-row items-center' >
+      <div className='w-screen flex flex-row items-center justify-center ' >
         <img src={d4} alt="d4" onClick={()=>roll(4)}/>
         <img src={d8} alt="d8"onClick={()=>roll(8)}/>
         <img src={d10} alt="d10" onClick={()=>roll(10)}/>
         <img src={d12} alt="d12"onClick={()=>roll(12)} />
         <img src={d20} alt="d20" onClick={()=>roll(20)} />
       </div>
-      <div className='flex flex-row items-center justify-between ' >
-      <img src={minus} onClick={()=>{if(diceCounter > 1)setDiceCounter(diceCounter-1)}} alt="minus icon" width="32" /><span className='w-12 h-5 bg-grey-800 flex flex-col items-center' >{diceCounter}</span><img src={plus} onClick={()=>setDiceCounter(diceCounter+1)} alt="plus icon" width="32" />
+      <div className='w-screen flex flex-row items-center justify-center '>
+        <div className='flex flex-row items-center justify-center' >
+          <img src={minus} onClick={()=>{if(diceCounter > 1)setDiceCounter(diceCounter-1)}} alt="minus icon" width="32" /><span className='w-12 h-5 bg-grey-800 flex flex-col items-center' >{diceCounter}</span><img src={plus} onClick={()=>setDiceCounter(diceCounter+1)} alt="plus icon" width="32" />
+        </div>
       </div>
       <div className='flex flex-row items-center' >
         <Heading>{rolledValue}</Heading>
