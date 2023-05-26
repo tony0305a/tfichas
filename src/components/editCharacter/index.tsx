@@ -57,7 +57,7 @@ export const EditCharacter = ({ usuario, item }) => {
     gold: any,
     ba: any
   ) => {
-    updateDoc(doc(db,'characters',item.id),{
+    updateDoc(doc(db,'characters',item.id.trim()),{
         belongsTo: user,
         nome: n,
         experiencia: e,
@@ -374,3 +374,7 @@ export const EditCharacter = ({ usuario, item }) => {
     </>
   );
 };
+function trim(id: any): string {
+    throw new Error("Function not implemented.");
+}
+
