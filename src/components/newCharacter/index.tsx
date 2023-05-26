@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { db } from "../../firestore";
-import { addDoc, collection, doc } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import uuid from "react-uuid";
 
 export const NewCharacter = ({ usuario}) => {
@@ -58,7 +58,7 @@ export const NewCharacter = ({ usuario}) => {
   ) => {
   const df = await addDoc(collection(db, "characters"), {
       belongsTo: user,
-      id: uuid() ,
+      id:0,
       nome: n,
       experiencia: e,
       raça: r,
@@ -87,6 +87,7 @@ export const NewCharacter = ({ usuario}) => {
       ouro: gold,
       ba: ba,
     });
+    updateDoc(doc(db,'characters',df.id),{id:df.id})
     setShow(false)
   };
 
