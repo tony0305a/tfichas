@@ -361,7 +361,7 @@ export const Home = () => {
                 key={id}
                 className=" w-2/5 flex flex-col mt-2 p-1 m-1 rounded-t-md"
               >
-                <div className="bg-red-900 flex flex-row justify-between ">
+                <div className="bg-red-900 flex flex-row justify-between md:w-screen sm:w-screen  lg:w-full xl: w-full ">
                   <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
                     {item.nome}| Nv. {item.nivel} | {item.raça} | {item.classe} |{" "}
                     {item.alinhamento} | {item.experiencia}/{item.experienciaMeta}
@@ -379,7 +379,7 @@ export const Home = () => {
                     Editar
                   </button>
                 </div>
-                <div className="w-2/5 flex flex-row justify-between">
+                <div className="w-2/5 flex flex-row  justify-self-auto sm:w-screen md:w-screen ">
                   {showEdit ? (
                     <EditCharacter
                       usuario={localStorage.getItem("@login")}
