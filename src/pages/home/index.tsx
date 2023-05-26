@@ -162,7 +162,7 @@ export const Home = () => {
     }
   };
 
-  const attrTest = (type: string, attr: string) => {
+  const attrTest = (type: string, attr: string,name:string) => {
     var today = new Date();
     var h: any = today.getHours();
     if (today.getHours() < 10) {
@@ -182,9 +182,9 @@ export const Home = () => {
     var diceRoll = Math.floor(Math.random() * 20) + 1;
     var text: any;
     if (diceRoll - getMod(attr) <= parseInt(attr)) {
-      text = `com mod ${getMod(attr)} passa no teste de ${type} `;
+      text = `[${name}] com mod ${getMod(attr)} passa no teste de ${type} `;
     } else {
-      text = `com mod ${getMod(attr)} não passa no teste de ${type}`;
+      text = `[${name}] com mod ${getMod(attr)} não passa no teste de ${type}`;
     }
 
     setRolls((prevState) => [
@@ -200,7 +200,7 @@ export const Home = () => {
     });
   };
 
-  const saveThorws = (type: string, attr: string, base: string) => {
+  const saveThorws = (type: string, attr: string, base: string,name:string) => {
     var today = new Date();
     var h: any = today.getHours();
     if (today.getHours() < 10) {
@@ -220,9 +220,9 @@ export const Home = () => {
     var diceRoll = Math.floor(Math.random() * 20) + 1;
     var text: any;
     if (diceRoll <= parseInt(base) + getMod(attr)) {
-      text = `passou na ${type}`;
+      text = ` [${name}] passou na ${type}`;
     } else {
-      text = `não passou na ${type}`;
+      text = ` [${name}] não passou na ${type}`;
     }
 
     setRolls((prevState) => [
@@ -402,7 +402,7 @@ export const Home = () => {
                       </span>
                       <button
                         className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                        onClick={() => attrTest("Força", item.força)}
+                        onClick={() => attrTest("Força", item.força,item.nome)}
                       >
                         💪🏼
                       </button>
@@ -416,7 +416,7 @@ export const Home = () => {
                       </span>
                       <button
                         className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                        onClick={() => attrTest("Destreza", item.destreza)}
+                        onClick={() => attrTest("Destreza", item.destreza,item.nome)}
                       >
                         🏹
                       </button>
@@ -431,7 +431,7 @@ export const Home = () => {
                       <button
                         className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         onClick={() =>
-                          attrTest("Constituição", item.constituicao)
+                          attrTest("Constituição", item.constituicao,item.nome)
                         }
                       >
                         🗿
@@ -447,7 +447,7 @@ export const Home = () => {
                       <button
                         className="py-3 px-4 m-2 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         onClick={() =>
-                          attrTest("Inteligência", item.inteligencia)
+                          attrTest("Inteligência", item.inteligencia,item.nome)
                         }
                       >
                         🧠
@@ -462,7 +462,7 @@ export const Home = () => {
                       </span>
                       <button
                         className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                        onClick={() => attrTest("Sabedoria", item.sabedoria)}
+                        onClick={() => attrTest("Sabedoria", item.sabedoria,item.nome)}
                       >
                         🦉
                       </button>
@@ -476,7 +476,7 @@ export const Home = () => {
                       </span>
                       <button
                         className="py-3 px-4 m-2 bg-sky rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                        onClick={() => attrTest("Carisma", item.carisma)}
+                        onClick={() => attrTest("Carisma", item.carisma,item.nome)}
                       >
                         🗣️
                       </button>
@@ -523,7 +523,7 @@ export const Home = () => {
                         </span>
                         <button
                           onClick={() => {
-                            saveThorws("JPD", item.destreza, item.jpd);
+                            saveThorws("JPD", item.destreza, item.jpd,item.nome);
                           }}
                           className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         >
@@ -536,7 +536,7 @@ export const Home = () => {
                         </span>
                         <button
                           onClick={() => {
-                            saveThorws("JPC", item.constituicao, item.jpc);
+                            saveThorws("JPC", item.constituicao, item.jpc,item.nome);
                           }}
                           className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         >
@@ -549,7 +549,7 @@ export const Home = () => {
                         </span>
                         <button
                           onClick={() => {
-                            saveThorws("JPS", item.sabedoria, item.jps);
+                            saveThorws("JPS", item.sabedoria, item.jps,item.nome);
                           }}
                           className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         >
