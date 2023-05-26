@@ -27,12 +27,10 @@ export const Login = () =>{
     const handleLogin = async (acessLogin:string,acessPassword:string) =>{
         
         try{
-            const stateQuery =  query(collection(db,"users"), where("name", "==", acessLogin),where("password","==",acessPassword));
-            const doc = await getDocs(stateQuery)
-            const data = doc.docs[0].data()
-            setUserName(data)
-            localStorage.setItem("name",acessLogin)
-            localStorage.setItem("acess","0")
+            const stateQuery =  query(collection(db,"users"), where("login", "==", acessLogin),where("password","==",acessPassword));
+            const q = await getDocs(stateQuery)
+            localStorage.setItem("uid",q.docs[0].data().id)
+            localStorage.setItem("@login",q.docs[0].data().login)
             navigate("/home")
         }catch(e){     
             setLoginError(true)
@@ -40,11 +38,6 @@ export const Login = () =>{
                 setLoginError(false)
             },1000)
         }
-
-
-
-
-        console.log(userName)
 
     }
 

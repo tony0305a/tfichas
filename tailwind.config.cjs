@@ -24,7 +24,14 @@ module.exports = {
       "cyan-500": "#81d8f7",
       "cyan-300": "#98e1fb",
 
-      "red":"#ef4444"
+      "red":"#ef4444",
+      "red-900":"#450a0a",
+      "green-700":"#4d7c0f",
+      "green-500":"#65a30d",
+      "purple":"#4c1d95",
+      "stone":"#57534e",
+      "sky":"#0c4a6e",
+
     },
     extend: {
       fontFamily: {
