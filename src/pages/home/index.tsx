@@ -31,6 +31,7 @@ import minus from "../../svgs/minus.png";
 import "../../styles/global.css";
 import clsx from "clsx";
 import { NewCharacter } from "../../components/newCharacter";
+import { EditCharacter } from "../../components/editCharacter";
 
 export const Home = () => {
   const [rolls, setRolls] = useState<any>([]);
@@ -41,7 +42,7 @@ export const Home = () => {
   const [sessionRole, setSessionRole] = useState<number>();
   const [sessionCharacter, setSessionCharacters] = useState<any>([]);
   const [show, setShow] = useState<boolean>(false);
-
+  const [showEdit, setShowEdit] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -102,11 +103,11 @@ export const Home = () => {
       allRolls.push({ dice: `d${item.value}`, value: diceRoll });
     });
     let sum = 0;
-    let text = "";
+    let text = "| ";
     allRolls.map((item) => {
       if (item.dice != "dundefined") {
         sum = sum + item.value;
-        text = text + `${item.dice}->[${item.value}] `;
+        text = text + ` ${item.dice}->[${item.value}] `;
       }
     });
     var today = new Date();
@@ -181,13 +182,47 @@ export const Home = () => {
     var diceRoll = Math.floor(Math.random() * 20) + 1;
     var text: any;
     if (diceRoll - getMod(attr) <= parseInt(attr)) {
-      text = `Com mod ${getMod(
-        attr
-      )} ${sessionName} passa no teste de ${type} `;
+      text = `com mod ${getMod(attr)} passa no teste de ${type} `;
     } else {
-      text = `Com mod ${getMod(
-        attr
-      )} ${sessionName} não passa no teste de ${type}`;
+      text = `com mod ${getMod(attr)} não passa no teste de ${type}`;
+    }
+
+    setRolls((prevState) => [
+      ...prevState,
+      { time: time, name: sessionName, roll: diceRoll, text: text },
+    ]);
+    addDoc(collection(db, "rolagens"), {
+      time: time,
+      name: sessionName,
+      roll: diceRoll,
+      text: text,
+      createdAt: serverTimestamp(),
+    });
+  };
+
+  const saveThorws = (type: string, attr: string, base: string) => {
+    var today = new Date();
+    var h: any = today.getHours();
+    if (today.getHours() < 10) {
+      h = `0${h}`;
+    }
+    var m: any = today.getMinutes();
+    if (today.getMinutes() < 10) {
+      m = `0${m}`;
+    }
+    var s: any = today.getSeconds();
+    if (today.getSeconds() < 10) {
+      s = `0${s}`;
+    }
+
+    var time = `${h}:${m}:${s}`;
+
+    var diceRoll = Math.floor(Math.random() * 20) + 1;
+    var text: any;
+    if (diceRoll <= parseInt(base) + getMod(attr)) {
+      text = `passou na ${type}`;
+    } else {
+      text = `não passou na ${type}`;
     }
 
     setRolls((prevState) => [
@@ -304,9 +339,7 @@ export const Home = () => {
                 {"["}
                 {item.time}
                 {"]"}
-                {item.name} {"->"} rolou {item.roll} {"| "}
-                {item.text}
-                {"|"}
+                {item.name} {"->"} rolou {item.roll} {item.text}
               </span>
             ) : (
               <></>
@@ -333,9 +366,28 @@ export const Home = () => {
                     {item.nome} | {item.raça} | {item.classe} |{" "}
                     {item.alinhamento}
                   </span>
-                  <button className="mx-3">Editar</button>
+                  <button
+                    onClick={() => {
+                      if (showEdit) {
+                        setShowEdit(false);
+                      } else {
+                        setShowEdit(true);
+                      }
+                    }}
+                    className="mx-3"
+                  >
+                    Editar
+                  </button>
                 </div>
                 <div className="w-2/5 flex flex-row justify-between">
+                  {showEdit ? (
+                    <EditCharacter
+                      usuario={localStorage.getItem("@login")}
+                      item={item}
+                    />
+                  ) : (
+                    <></>
+                  )}
                   <div className="flex flex-col">
                     <span className="text-xs  p-1  font-bold md:text-sm lg:text-base">
                       Atributos
@@ -470,9 +522,12 @@ export const Home = () => {
                           JPD: {item.jpd}
                         </span>
                         <button
-                        className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                      >
-                        🛡️
+                          onClick={() => {
+                            saveThorws("JPD", item.destreza, item.jpd);
+                          }}
+                          className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                        >
+                          🛡️
                         </button>
                       </div>
                       <div>
@@ -480,9 +535,12 @@ export const Home = () => {
                           JPC: {item.jpc}
                         </span>
                         <button
-                        className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                      >
-                        🛡️
+                          onClick={() => {
+                            saveThorws("JPC", item.constituicao, item.jpc);
+                          }}
+                          className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                        >
+                          🛡️
                         </button>
                       </div>
                       <div>
@@ -490,14 +548,15 @@ export const Home = () => {
                           JPS: {item.jps}
                         </span>
                         <button
-                        className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                      >
-                        🛡️
+                          onClick={() => {
+                            saveThorws("JPS", item.sabedoria, item.jps);
+                          }}
+                          className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                        >
+                          🛡️
                         </button>
                       </div>
-
                     </div>
-
                   </div>
                 </div>
               </div>
