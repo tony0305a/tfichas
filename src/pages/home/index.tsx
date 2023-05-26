@@ -363,8 +363,8 @@ export const Home = () => {
               >
                 <div className="bg-red-900 flex flex-row justify-between ">
                   <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
-                    {item.nome} | {item.raça} | {item.classe} |{" "}
-                    {item.alinhamento}
+                    {item.nome}| Nv. {item.nivel} | {item.raça} | {item.classe} |{" "}
+                    {item.alinhamento} | {item.experiencia}/{item.experienciaMeta}
                   </span>
                   <button
                     onClick={() => {
@@ -515,6 +515,9 @@ export const Home = () => {
                       </span>
                       <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
                         (⚔️)B.A: {item.ba}
+                      </span>
+                      <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                        (🏹)B.A: {item.baD}
                       </span>
 
                       <div>

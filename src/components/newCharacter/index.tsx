@@ -5,6 +5,7 @@ import uuid from "react-uuid";
 
 export const NewCharacter = ({ usuario}) => {
   const [nome, setNome] = useState<any>();
+  const [nivel, setNivel] = useState<any>();
   const [exp, setExp] = useState<any>();
   const [raca, setRaca] = useState<any>();
   const [classe, setClasse] = useState<any>();
@@ -29,6 +30,7 @@ export const NewCharacter = ({ usuario}) => {
 
   const [ouro, setOuro] = useState<any>();
   const [ba, setBa] = useState<any>();
+  const [baD, setBaD] = useState<any>();
 
   const [show, setShow] = useState<any>(true);
 
@@ -54,13 +56,17 @@ export const NewCharacter = ({ usuario}) => {
     jc: any,
     js: any,
     gold: any,
-    ba: any
+    ba: any,
+    nv:any,
+    baD:any
   ) => {
   const df = await addDoc(collection(db, "characters"), {
       belongsTo: user,
       id:0,
       nome: n,
+      nivel:nv,
       experiencia: e,
+      experienceMeta:0,
       raça: r,
       classe: c,
       alinhamento: a,
@@ -86,6 +92,7 @@ export const NewCharacter = ({ usuario}) => {
 
       ouro: gold,
       ba: ba,
+      baD:baD
     });
     updateDoc(doc(db,'characters',df.id),{id:df.id})
     setShow(false)
@@ -108,6 +115,14 @@ export const NewCharacter = ({ usuario}) => {
                   className="bg-grey-700  w-32 "
                   type="text"
                   onChange={(e) => setNome(e.target.value)}
+                />
+              </div>
+              <div className=" mt-4 flex flex-col ">
+                <span>Nivel </span>
+                <input
+                  className="bg-grey-700  w-16 "
+                  type="number"
+                  onChange={(e) => setNivel(e.target.value)}
                 />
               </div>
               <div className=" mt-4 flex flex-col ">
@@ -285,11 +300,19 @@ export const NewCharacter = ({ usuario}) => {
                   />
                 </div>
                 <div className=" mt-4 flex flex-col ">
-                  <span>B.A</span>
+                  <span>B.A ⚔️</span>
                   <input
                     className="bg-grey-700 w-8 px-1 "
                     type="number"
                     onChange={(e) => setBa(e.target.value)}
+                  />
+                </div>
+                <div className=" mt-4 flex flex-col ">
+                  <span>B.A 🏹</span>
+                  <input
+                    className="bg-grey-700 w-8 px-1 "
+                    type="number"
+                    onChange={(e) => setBaD(e.target.value)}
                   />
                 </div>
               </div>
@@ -320,7 +343,9 @@ export const NewCharacter = ({ usuario}) => {
                   jpc,
                   jps,
                   ouro,
-                  ba
+                  ba,
+                  nivel,
+                  baD
                 );
               }}
             >

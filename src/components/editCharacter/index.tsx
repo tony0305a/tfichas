@@ -6,6 +6,7 @@ import uuid from "react-uuid";
 export const EditCharacter = ({ usuario, item }) => {
   const [nome, setNome] = useState<any>(item.nome);
   const [exp, setExp] = useState<any>(item.experiencia);
+  const [expMeta, setExpMeta] = useState<any>(item.experienciaMeta);
   const [raca, setRaca] = useState<any>(item.raça);
   const [classe, setClasse] = useState<any>(item.classe);
   const [alinhamento, setAlinhamento] = useState<any>(item.alinhamento);
@@ -30,6 +31,7 @@ export const EditCharacter = ({ usuario, item }) => {
 
   const [ouro, setOuro] = useState<any>(item.ouro);
   const [ba, setBa] = useState<any>(item.ba);
+  const [baD, setBaD] = useState<any>(item.baD);
 
   const [show, setShow] = useState<any>(true);
 
@@ -55,12 +57,15 @@ export const EditCharacter = ({ usuario, item }) => {
     jc: any,
     js: any,
     gold: any,
-    ba: any
+    ba: any,
+    expMeta:any,
+    baD:any
   ) => {
     updateDoc(doc(db,'characters',item.id.trim()),{
         belongsTo: user,
         nome: n,
         experiencia: e,
+        experienciaMeta:expMeta,
         raça: r,
         classe: c,
         alinhamento: a,
@@ -86,6 +91,7 @@ export const EditCharacter = ({ usuario, item }) => {
   
         ouro: gold,
         ba: ba,
+        baD:baD
       })
     setShow(false);
   };
@@ -117,6 +123,13 @@ export const EditCharacter = ({ usuario, item }) => {
                   className="bg-grey-700  w-16 "
                   type="number"
                   onChange={(e) => setExp(e.target.value)}
+                />
+                Meta
+                <input
+                  defaultValue={expMeta}
+                  className="bg-grey-700  w-16 "
+                  type="number"
+                  onChange={(e) => setExpMeta(e.target.value)}
                 />
               </div>
               <div className=" mt-4 flex flex-col ">
@@ -304,12 +317,21 @@ export const EditCharacter = ({ usuario, item }) => {
                   />
                 </div>
                 <div className=" mt-4 flex flex-col ">
-                  <span>B.A</span>
+                  <span>B.A ⚔️</span>
                   <input
                   defaultValue={ba}
                     className="bg-grey-700 w-8 px-1 "
                     type="number"
                     onChange={(e) => setBa(e.target.value)}
+                  />
+                </div>
+                <div className=" mt-4 flex flex-col ">
+                  <span>B.A 🏹</span>
+                  <input
+                  defaultValue={baD}
+                    className="bg-grey-700 w-8 px-1 "
+                    type="number"
+                    onChange={(e) => setBaD(e.target.value)}
                   />
                 </div>
                 <div className=" mt-4 flex flex-col ">
@@ -351,7 +373,9 @@ export const EditCharacter = ({ usuario, item }) => {
                   jpc,
                   jps,
                   ouro,
-                  ba
+                  ba,
+                  expMeta,
+                  baD
                 );
                 
               }}
