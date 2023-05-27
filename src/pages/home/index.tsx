@@ -246,7 +246,7 @@ export const Home = () => {
   };
 
   const addNote = (id:any,notes:any) =>{
-    updateDoc(doc(db,'characters',id),{notes:notes})
+    updateDoc(doc(db,'characters',id.trim()),{notes:notes})
   }
 
   return (
