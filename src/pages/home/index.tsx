@@ -366,7 +366,7 @@ export const Home = () => {
                 key={id}
                 className=" w-2/5 flex flex-col mt-2 p-1 m-1 rounded-t-md"
               >
-                <div className="bg-red-900 flex flex-row  justify-around w-screen  lg:w-full xl:w-full ">
+                <div className="bg-red-900 flex flex-row w-screen  lg:w-full xl:w-full ">
                   <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
                     {item.nome}| Nv. {item.nivel} | {item.raça} | {item.classe}{" "}
                     | {item.alinhamento} | {item.experiencia}/

@@ -101,13 +101,14 @@ export const NewCharacter = ({ usuario}) => {
   return (
     <>
       {show ? (
-        <div className="flex flex-col mt-8">
+        <div className="flex flex-col items-center mt-8">
           <div className="bg-red-900 p-2 rounded-t-md w-screen ">
             <span className="text-xs  p-2  font-bold md:text-sm lg:text-base">
               Novo personagem
             </span>
           </div>
-          <form className="flex flex-row  p-2">
+          <form className="flex flex-col  p-2">
+            <div className="flex flex-row" >
             <div className="flex flex-col mx-1 ">
               <div className=" mt-4 flex flex-col ">
                 <span>Nome </span>
@@ -316,6 +317,7 @@ export const NewCharacter = ({ usuario}) => {
                   />
                 </div>
               </div>
+            </div>
             </div>
             <button
               type="reset"

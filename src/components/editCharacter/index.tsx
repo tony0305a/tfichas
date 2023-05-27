@@ -105,7 +105,8 @@ export const EditCharacter = ({ usuario, item }) => {
               Editar Personagem
             </span>
           </div>
-          <form className="flex flex-row  p-2">
+          <form className="flex flex-col  p-2">
+            <div className="flex flex-row" >
             <div className="flex flex-col mx-1 ">
               <div className=" mt-4 flex flex-col ">
                 <span>Nome </span>
@@ -345,9 +346,10 @@ export const EditCharacter = ({ usuario, item }) => {
                 </div>
               </div>
             </div>
+            </div>
             <button
               type="reset"
-              className="py-3 px-2 m-2 bg-green-700 rounded font-semibold text-white text-sm transition-colors hover:bg-grenn-500 focus:ring-2 ring-white"
+              className="py-3 px-2 m-2 bg-green-700 w-full rounded font-semibold text-white text-sm transition-colors hover:bg-grenn-500 focus:ring-2 ring-white"
               onClick={() => {
                 console.log(item);
                 
@@ -386,7 +388,7 @@ export const EditCharacter = ({ usuario, item }) => {
             onClick={()=>{
                 setShow(false)
             }}
-              className="py-3 px-2 m-2 bg-red-900 rounded font-semibold text-white text-sm transition-colors hover:bg-grenn-500 focus:ring-2 ring-white"
+              className="py-3 px-2 m-2 bg-red-900 rounded w-full font-semibold text-white text-sm transition-colors hover:bg-grenn-500 focus:ring-2 ring-white"
             >
               Cancelar
             </button>
