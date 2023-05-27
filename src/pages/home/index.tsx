@@ -380,7 +380,7 @@ export const Home = () => {
                         setShowEdit(true);
                       }
                     }}
-                    className="mx-3"
+                    className=" px-1"
                   >
                     Editar
                   </button>
