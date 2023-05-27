@@ -580,8 +580,8 @@ export const Home = () => {
                     </div>
                   </div>
                 </div>
-                <div className="w-screen flex flex-col items-center lg:w-full xl:w-full  "  >
-                <textarea defaultValue={item.notes} onChange={(e)=>{setNotes(e.target.value);console.log(notes)}}  className="bg-grey-700 w-screen lg:w-full xl:w-full" />
+                <div className="w-screen  h-60  flex flex-col items-center lg:w-full xl:w-full  "  >
+                <textarea defaultValue={item.notes} onChange={(e)=>{setNotes(e.target.value);console.log(notes)}}  className="bg-grey-700 w-screen h-full lg:w-full xl:w-full" />
                 <button
                 onClick={()=>{
                   addNote(item.id,notes)
