@@ -371,7 +371,7 @@ export const Home = () => {
             id >= 1 ? (
               <div
                 key={id}
-                className=" w-2/5 flex flex-col mt-2 p-1 m-1 rounded-t-md"
+                className=" w-2/5 flex flex-col mt-2 m-1 rounded-t-md  border-4 border-red-900  "
               >
                 <div className="bg-red-900 flex flex-row w-screen  lg:w-full xl:w-full ">
                   <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
@@ -599,7 +599,7 @@ export const Home = () => {
                         setShowEdit(true);
                       }
                     }}
-                    className="py-3 px-4 m-2 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                    className="py-3 px-4 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                   >
                     Editar
                   </button>
@@ -611,6 +611,7 @@ export const Home = () => {
                 ) : (
                   <></>
                 )}
+                
               </div>
             ) : (
               <></>
