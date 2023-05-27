@@ -162,7 +162,7 @@ export const Home = () => {
     }
   };
 
-  const attrTest = (type: string, attr: string,name:string) => {
+  const attrTest = (type: string, attr: string, name: string) => {
     var today = new Date();
     var h: any = today.getHours();
     if (today.getHours() < 10) {
@@ -200,7 +200,12 @@ export const Home = () => {
     });
   };
 
-  const saveThorws = (type: string, attr: string, base: string,name:string) => {
+  const saveThorws = (
+    type: string,
+    attr: string,
+    base: string,
+    name: string
+  ) => {
     var today = new Date();
     var h: any = today.getHours();
     if (today.getHours() < 10) {
@@ -361,10 +366,11 @@ export const Home = () => {
                 key={id}
                 className=" w-2/5 flex flex-col mt-2 p-1 m-1 rounded-t-md"
               >
-                <div className="bg-red-900 flex flex-row justify-between md:w-screen sm:w-screen  lg:w-full xl: w-full ">
+                <div className="bg-red-900 flex flex-row justify-between w-screen  lg:w-full xl:w-full ">
                   <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
-                    {item.nome}| Nv. {item.nivel} | {item.raça} | {item.classe} |{" "}
-                    {item.alinhamento} | {item.experiencia}/{item.experienciaMeta}
+                    {item.nome}| Nv. {item.nivel} | {item.raça} | {item.classe}{" "}
+                    | {item.alinhamento} | {item.experiencia}/
+                    {item.experienciaMeta}
                   </span>
                   <button
                     onClick={() => {
@@ -379,7 +385,7 @@ export const Home = () => {
                     Editar
                   </button>
                 </div>
-                <div className="w-2/5 flex flex-row  justify-self-auto sm:w-screen md:w-screen ">
+                <div className="w-screen flex flex-row  justify-self-auto ">
                   {showEdit ? (
                     <EditCharacter
                       usuario={localStorage.getItem("@login")}
@@ -402,7 +408,7 @@ export const Home = () => {
                       </span>
                       <button
                         className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                        onClick={() => attrTest("Força", item.força,item.nome)}
+                        onClick={() => attrTest("Força", item.força, item.nome)}
                       >
                         💪🏼
                       </button>
@@ -416,7 +422,9 @@ export const Home = () => {
                       </span>
                       <button
                         className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                        onClick={() => attrTest("Destreza", item.destreza,item.nome)}
+                        onClick={() =>
+                          attrTest("Destreza", item.destreza, item.nome)
+                        }
                       >
                         🏹
                       </button>
@@ -431,7 +439,7 @@ export const Home = () => {
                       <button
                         className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         onClick={() =>
-                          attrTest("Constituição", item.constituicao,item.nome)
+                          attrTest("Constituição", item.constituicao, item.nome)
                         }
                       >
                         🗿
@@ -447,7 +455,7 @@ export const Home = () => {
                       <button
                         className="py-3 px-4 m-2 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         onClick={() =>
-                          attrTest("Inteligência", item.inteligencia,item.nome)
+                          attrTest("Inteligência", item.inteligencia, item.nome)
                         }
                       >
                         🧠
@@ -462,7 +470,9 @@ export const Home = () => {
                       </span>
                       <button
                         className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                        onClick={() => attrTest("Sabedoria", item.sabedoria,item.nome)}
+                        onClick={() =>
+                          attrTest("Sabedoria", item.sabedoria, item.nome)
+                        }
                       >
                         🦉
                       </button>
@@ -476,15 +486,17 @@ export const Home = () => {
                       </span>
                       <button
                         className="py-3 px-4 m-2 bg-sky rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                        onClick={() => attrTest("Carisma", item.carisma,item.nome)}
+                        onClick={() =>
+                          attrTest("Carisma", item.carisma, item.nome)
+                        }
                       >
                         🗣️
                       </button>
                     </div>
                   </div>
 
-                  <div className="flex flex-row">
-                    <div className="flex flex-col">
+                  <div className="flex flex-row flex-wrap  ">
+                    <div className="flex flex-col flex-wrap ">
                       <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
                         Est. de Combate
                       </span>
@@ -504,8 +516,12 @@ export const Home = () => {
                         ):{item.pva}/{item.pv}
                       </span>
                       <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                        (🛡️)CA({item.ca})+DES({getMod(item.destreza)}
-                        )+ARMADURA({item.armadura})+ESCUDO({item.escudo}) =
+                        (🛡️)CA({item.ca})+DES({getMod(item.destreza)})
+                      </span>
+                      <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                        +ARMADURA({item.armadura})+ESCUDO({item.escudo})
+                      </span>
+                      <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
                         TOTAL(
                         {parseInt(item.ca) +
                           getMod(item.destreza) +
@@ -526,7 +542,12 @@ export const Home = () => {
                         </span>
                         <button
                           onClick={() => {
-                            saveThorws("JPD", item.destreza, item.jpd,item.nome);
+                            saveThorws(
+                              "JPD",
+                              item.destreza,
+                              item.jpd,
+                              item.nome
+                            );
                           }}
                           className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         >
@@ -539,7 +560,12 @@ export const Home = () => {
                         </span>
                         <button
                           onClick={() => {
-                            saveThorws("JPC", item.constituicao, item.jpc,item.nome);
+                            saveThorws(
+                              "JPC",
+                              item.constituicao,
+                              item.jpc,
+                              item.nome
+                            );
                           }}
                           className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         >
@@ -552,7 +578,12 @@ export const Home = () => {
                         </span>
                         <button
                           onClick={() => {
-                            saveThorws("JPS", item.sabedoria, item.jps,item.nome);
+                            saveThorws(
+                              "JPS",
+                              item.sabedoria,
+                              item.jps,
+                              item.nome
+                            );
                           }}
                           className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                         >
