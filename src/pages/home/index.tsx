@@ -372,18 +372,6 @@ export const Home = () => {
                     | {item.alinhamento} | {item.experiencia}/
                     {item.experienciaMeta}
                   </span>
-                  <button
-                    onClick={() => {
-                      if (showEdit) {
-                        setShowEdit(false);
-                      } else {
-                        setShowEdit(true);
-                      }
-                    }}
-                    className=" px-1"
-                  >
-                    Editar
-                  </button>
                 </div>
                 <div className="w-screen flex flex-row  justify-self-auto ">
                   <div className="flex flex-col">
@@ -585,6 +573,19 @@ export const Home = () => {
                     </div>
                   </div>
                 </div>
+                <button
+                
+                    onClick={() => {
+                      if (showEdit) {
+                        setShowEdit(false);
+                      } else {
+                        setShowEdit(true);
+                      }
+                    }}
+                    className="py-3 px-4 m-2 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                  >
+                    Editar
+                  </button>
                 {showEdit ? (
                   <EditCharacter
                     usuario={localStorage.getItem("@login")}
