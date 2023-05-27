@@ -371,7 +371,7 @@ export const Home = () => {
             id >= 1 ? (
               <div
                 key={id}
-                className=" w-2/5 flex flex-col mt-2 m-1 rounded-t-md  border-4 border-red-900  "
+                className=" w-screen flex flex-col mt-2 m-1 rounded-t-md  border-4 border-red-900 xl:w-2/5 "
               >
                 <div className="bg-red-900 flex flex-row w-screen  lg:w-full xl:w-full ">
                   <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
