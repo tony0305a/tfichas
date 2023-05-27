@@ -17,6 +17,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +44,7 @@ export const Home = () => {
   const [sessionCharacter, setSessionCharacters] = useState<any>([]);
   const [show, setShow] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<boolean>(false);
+  const [notes,setNotes] = useState<any>("")
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -242,6 +244,10 @@ export const Home = () => {
       createdAt: serverTimestamp(),
     });
   };
+
+  const addNote = (id:any,notes:any) =>{
+    updateDoc(doc(db,'characters',id),{notes:notes})
+  }
 
   return (
     <div className="w-screen h-screen bg-grey-900 justify-center text-grey-100 flex-col ">
@@ -573,8 +579,18 @@ export const Home = () => {
                     </div>
                   </div>
                 </div>
+                <div className="w-full flex flex-col items-center"  >
+                <textarea defaultValue={item.notes} onChange={(e)=>{setNotes(e.target.value);console.log(notes)}}  className="bg-grey-700 w-full" />
                 <button
-                
+                onClick={()=>{
+                  addNote(item.id,notes)
+                }}
+                className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                >
+                  Salvar
+                </button>
+                </div>
+                <button
                     onClick={() => {
                       if (showEdit) {
                         setShowEdit(false);
