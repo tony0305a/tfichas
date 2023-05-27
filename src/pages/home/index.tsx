@@ -337,7 +337,7 @@ export const Home = () => {
           </div>
         </div>
 
-        <div className="  bg-grey-900 flex flex-col items-center w-screen h-48 overflow-y-auto scroll-auto mt-8 p-4 rounded">
+        <div className="  bg-grey-900 flex flex-col items-start w-screen  h-48 overflow-y-auto scroll-auto mt-8 p-4 rounded  xl: w-2/5 ">
           {rolls.map((item: any, id: any) =>
             id >= 1 ? (
               <span
