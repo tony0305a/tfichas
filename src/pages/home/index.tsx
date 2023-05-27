@@ -583,7 +583,7 @@ export const Home = () => {
                 <textarea defaultValue={item.notes} onChange={(e)=>{setNotes(e.target.value);console.log(notes)}}  className="bg-grey-700 w-full" />
                 <button
                 onClick={()=>{
-                  addNote(item.id,notes)
+                  addNote(item.id.trim(),notes)
                 }}
                 className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                 >
