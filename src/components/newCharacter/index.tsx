@@ -66,7 +66,7 @@ export const NewCharacter = ({ usuario}) => {
       nome: n,
       nivel:nv,
       experiencia: e,
-      experienceMeta:0,
+      experienciaMeta:0,
       raça: r,
       classe: c,
       alinhamento: a,
