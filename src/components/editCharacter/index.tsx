@@ -10,6 +10,7 @@ export const EditCharacter = ({ usuario, item }) => {
   const [raca, setRaca] = useState<any>(item.raça);
   const [classe, setClasse] = useState<any>(item.classe);
   const [alinhamento, setAlinhamento] = useState<any>(item.alinhamento);
+  const [pic, setPic] = useState<any>(item.pic);
 
   const [forca, setForca] = useState<any>(item.força);
   const [destreza, setDestreza] = useState<any>(item.destreza);
@@ -59,7 +60,8 @@ export const EditCharacter = ({ usuario, item }) => {
     gold: any,
     ba: any,
     expMeta:any,
-    baD:any
+    baD:any,
+    pic:any
   ) => {
     updateDoc(doc(db,'characters',item.id.trim()),{
         belongsTo: user,
@@ -69,6 +71,7 @@ export const EditCharacter = ({ usuario, item }) => {
         raça: r,
         classe: c,
         alinhamento: a,
+        pic:pic,
   
         força: forc,
         destreza: des,
@@ -158,6 +161,15 @@ export const EditCharacter = ({ usuario, item }) => {
                   className="bg-grey-700 w-32 "
                   type="text"
                   onChange={(e) => setAlinhamento(e.target.value)}
+                />
+              </div>
+              <div className=" mt-4 flex flex-col ">
+                <span>Token</span>
+                <input
+                  defaultValue={pic}
+                  className="bg-grey-700 w-32 "
+                  type="text"
+                  onChange={(e) => setPic(e.target.value)}
                 />
               </div>
             </div>
@@ -377,7 +389,8 @@ export const EditCharacter = ({ usuario, item }) => {
                   ouro,
                   ba,
                   expMeta,
-                  baD
+                  baD,
+                  pic
                 );
                 
               }}
