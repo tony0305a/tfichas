@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   query,
   updateDoc,
 } from "firebase/firestore";
@@ -36,13 +37,19 @@ export const BestiaryCard = ({ item }) => {
 
   const [pic, setPic] = useState<string>(item.pic);
 
+  const [meleeW, setMeleeW] = useState<any>(item.meleeWeapon);
+  const [meleeWQnt, setMeleeWQnt] = useState<any>(item.meleeWeaponQnt);
+  const [meleeWDmg, setMeleeWDmg] = useState<any>(item.meleeWeaponDmg);
+
+  const [rangedW, setRangedW] = useState<any>(item.rangedWeapon);
+  const [rangedWQnt, setRangedWQnt] = useState<any>(item.rangedWeaponQnt);
+  const [rangedWDmg, setRangedWDmg] = useState<any>(item.rangedWeaponDmg);
+
+  const [rCount,setRCount] = useState<any>(0)
+
   const [editMode, setEditMode] = useState(true);
 
-
-  useEffect(()=>{
-
-
-  },[])
+  useEffect(() => {}, []);
 
   const getMod = (value: string) => {
     if (parseInt(value) <= 8) {
@@ -79,7 +86,13 @@ export const BestiaryCard = ({ item }) => {
     jpc: any,
     jps: any,
     ba: any,
-    baD: any
+    baD: any,
+    meleeW:any,
+    meleeWQnt:any,
+    meleeWDmg:any,
+    rangedW:any,
+    rangedWQnt:any,
+    rangedWDmg:any,
   ) => {
     await updateDoc(doc(db, "PdMs", item.id), {
       pic: pic,
@@ -91,7 +104,7 @@ export const BestiaryCard = ({ item }) => {
       inteligencia: int,
       sabedoria: sab,
       carisma: car,
-      pva: pva,
+      pva: parseInt(pv) + getMod(constituicao),
       pv: parseInt(pv) + getMod(constituicao),
       ca: caB,
       armadura: armadura,
@@ -101,14 +114,29 @@ export const BestiaryCard = ({ item }) => {
       jps: jps,
       ba: ba,
       baD: baD,
+      meleeWeapon:meleeW,
+      meleeWeaponQnt:meleeWQnt,
+      meleeWeaponDmg:meleeWDmg,
+      rangedWeapon:rangedW,
+      rangedWeaponQnt:rangedWQnt,
+      rangedWeaponDmg:rangedWDmg
     });
   };
 
   const toBattle = async () => {
+    setRCount(rCount+1)
+    var nTo = item.name
+    const q = query(collection(db,"battle"))
+    const ver = await getDocs(q)
+      ver.forEach((vItem)=>{
+        if(vItem.data().nome == item.nome){
+          nTo = `${nTo} #${rCount}`
+        }
+      })
     const df = await addDoc(collection(db, "battle"), {
       id: 0,
       pic: item.pic,
-      nome: item.name,
+      nome:nTo,
       nd: item.nd,
       força: item.força,
       destreza: item.destreza,
@@ -117,7 +145,7 @@ export const BestiaryCard = ({ item }) => {
       sabedoria: item.sabedoria,
       carisma: item.carisma,
       pva: item.pva,
-      pv: parseInt(item.pv) + getMod(item.constituicao),
+      pv: item.pv,
       ca: item.ca,
       armadura: item.armadura,
       escudo: item.escudo,
@@ -127,13 +155,20 @@ export const BestiaryCard = ({ item }) => {
       ba: item.ba,
       baD: item.baD,
       iniciativa: Math.floor(Math.random() * 20) + 1 + getMod(item.destreza),
+      meleeWeapon:item.meleeWeapon,
+      meleeWeaponQnt:item.meleeWeaponQnt,
+      meleeWeaponDmg:item.meleeWeaponDmg,
+      rangedWeapon:item.rangedWeapon,
+      rangedWeaponQnt:item.rangedWeaponQnt,
+      rangedWeaponDmg:item.rangedWeaponDmg,
+      partId:item.id
     });
     updateDoc(doc(db, "battle", df.id), { id: df.id });
   };
   return (
     <>
       {editMode ? (
-        <div className="flex flex-col border-4 border-red-900 items-center justify-center mt-1 rounded-t-md ">
+        <div className="flex flex-col border-4 border-red-900 items-center justify-center mt-1 rounded-t-md w-2/12">
           <div className="bg-red-900 flex flex-row w-screen  lg:w-full xl:w-full ">
             <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
               {item.name} | Nd. {item.nd}
@@ -257,7 +292,7 @@ export const BestiaryCard = ({ item }) => {
               className="py-1 px-1 m-2 bg-red-900 rounded font-semibold text-white text-sm transition-colors"
               onClick={() => {
                 setEditMode(false);
-                console.log(item)
+                console.log(item);
               }}
             >
               Editar
@@ -423,14 +458,6 @@ export const BestiaryCard = ({ item }) => {
           PV
           <div className="flex flex-row items-center justify-center ">
             <div className="flex flex-col m-1 justify-center items-center ">
-              <span>Atual</span>
-              <input
-                className="bg-grey-800 w-16 text-center"
-                onChange={(e) => setPva(e.target.value)}
-                defaultValue={pva}
-              />
-            </div>
-            <div className="flex flex-col m-1 justify-center items-center ">
               <span>Total</span>
               <div className="flex flex-row">
                 <input
@@ -549,6 +576,58 @@ export const BestiaryCard = ({ item }) => {
               </div>
             </div>
           </div>
+          <div className="flex flex-col">
+            <div className="flex flex-col m-1 ">
+              <span>Dano ⚔️</span>
+              <div className="flex flex-row">
+                <div className="flex flex-row">
+                  <input
+                    defaultValue={meleeWQnt}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setMeleeWQnt(e.target.value)}
+                  />
+                  <span className="mx-1">d</span>
+                  <input
+                    defaultValue={meleeW}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setMeleeW(e.target.value)}
+                  />
+                  <span>+</span>
+                  <input
+                    defaultValue={meleeWDmg}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setMeleeWDmg(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col m-1 ">
+              <span>Dano 🏹</span>
+              <div className="flex flex-row">
+                <div className="flex flex-row">
+                  <input
+                    defaultValue={rangedWQnt}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setRangedWQnt(e.target.value)}
+                  />
+                  <span className="mx-1">d</span>
+                  <input
+                    defaultValue={rangedW}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setRangedW(e.target.value)}
+                  />
+                  <span>+</span>
+                  <input
+                    defaultValue={rangedWDmg}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setRangedWDmg(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div> 
+          </div>
+
           <div className="flex flex-row">
             <button
               className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors"
@@ -572,7 +651,13 @@ export const BestiaryCard = ({ item }) => {
                   jpc,
                   jps,
                   ba,
-                  baD
+                  baD,
+                  meleeW,
+                  meleeWQnt,
+                  meleeWDmg,
+                  rangedW,
+                  rangedWQnt,
+                  rangedWDmg
                 );
                 setEditMode(true);
               }}
@@ -581,8 +666,7 @@ export const BestiaryCard = ({ item }) => {
             </button>
             <button
               className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors"
-              onClick={()=>{
-              }}
+              onClick={() => {}}
             >
               Deletar
             </button>

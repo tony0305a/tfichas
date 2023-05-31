@@ -13,12 +13,15 @@ import {
 import { useEffect, useState } from "react";
 import { db } from "../../firestore";
 import { BattleListCard } from "./battleListCard";
+import vs from "../../svgs/vs.png";
 
 export const BattleList = ({ role }) => {
   const [battlePart, setBattlePart] = useState<any>([]);
   const [turno, setTurno] = useState<any>(0);
-  const [char, setChar] = useState<any>();
+  const [char, setChar] = useState<any>([]);
   const [targets, setTargets] = useState<any>([]);
+  const [show, setShow] = useState<any>(false);
+  const [active, setActive] = useState<any>(false);
 
   useEffect(() => {
     const q = query(collection(db, "battle"));
@@ -35,9 +38,16 @@ export const BattleList = ({ role }) => {
         setTargets((prev) => [...prev, doc.data()]);
       });
     });
+    const q2 = query(collection(db, "turn"));
+    const unsub2 = onSnapshot(q2, (qSnap) => {
+      qSnap.forEach((doc) => {
+        setTurno(doc.data().turno);
+      });
+    });
     return () => {
       unsub();
-      unsub1;
+      unsub1();
+      unsub2();
     };
   }, []);
 
@@ -80,6 +90,11 @@ export const BattleList = ({ role }) => {
         Math.floor(Math.random() * 20) + 1 + getMod(character.destreza),
       pic: character.pic,
       belongsTo: character.belongsTo,
+      meleeWeapon:character.meleeWeapon,
+      meleeWeaponQnt:character.meleeWeaponQnt,
+      rangedWeapon:character.rangedWeapon,
+      rangedWeaponQnt:character.rangedWeaponQnt,
+      partId:character.id
     });
     updateDoc(doc(db, "battle", df.id), { id: df.id });
   };
@@ -95,80 +110,108 @@ export const BattleList = ({ role }) => {
 
   const getTurn = (bp) => {
     if (bp[turno] !== undefined) {
-      return bp[turno].nome || bp[turno].name;
+      return bp[turno];
     } else {
       return "";
     }
   };
 
+  const nextTurn = async () => {
+    const d = await getDoc(doc(db, "turn", "lddm17IafCgfNx998Uig"));
+    const nt = d.data().turno + 1;
+    updateDoc(d.ref, { turno: nt });
+    onSnapshot(collection(db, "turn"), (state) => {
+      if (state.docs[0].data().turno > battlePart.length - 1) {
+        updateDoc(d.ref, { turno: 0 });
+      }
+    });
+  };
 
+  const battleStart = async() =>{
+    const d = await getDoc(doc(db, "turn", "lddm17IafCgfNx998Uig"));
+    updateDoc(d.ref, { turno: 0 });
+  }
 
   return (
-    <div className="flex flex-col w-screen border-4 bg-grey-900 border-red-900 items-center ">
-      <div className="bg-red-900 p-2 w-screen rounded-t-md">
-        <span className="text-xs  p-2  font-bold md:text-sm lg:text-base">
-          Batalha
-        </span>
-      </div>
-      <div className="flex flex-col">
-        <button
-          onClick={() => {
-            getTurn(battlePart);
-          }}
-        >
-          Turno
-        </button>
-        <span>{getTurn(battlePart)}</span>
-        <button
-          onClick={() => {
-            if (turno >= battlePart.length) {
-              setTurno(0);
-            } else {
-              setTurno(turno + 1);
-            }
-          }}
-        >
-          Next
-        </button>
-      </div>
-      <div className="flex flex-col flex-wrap items-center ">
-        <span>Alvos</span>
-        {targets.map((item, index) => (
-          <div className="flex flex-row gap-2 ">
-            <span>
-              {item.targetedBy} tem como alvo {item.target}
+<div className="flex flex-col w-screen border-4 bg-grey-900 border-red-900 items-center ">
+          <div className="bg-red-900 p-2 w-screen rounded-t-md">
+            {role ==0 ?(<button
+            onClick={battleStart}
+            >Inciar combate</button>):(<></>)}
+            <span className="text-xs  p-2  font-bold md:text-sm lg:text-base">
+              Batalha
             </span>
+          </div>
+          <div className="flex flex-col">
             <button
-            className="bg-red-900 text-white px-1 rounded  "
-              onClick={async () => {
-                deleteDoc(doc(db, "targets", item.id));
+              onClick={() => {
+                getTurn(battlePart);
               }}
             >
-              x
+              Turno
+            </button>
+            <span>{getTurn(battlePart).nome}</span>
+          </div>
+          <div className="flex flex-col flex-wrap items-center ">
+            <span>Combate</span>
+            {targets.map((item, index) => (
+              <div key={index} className="flex flex-row gap-2 ">
+                <div className="flex flex-row">
+                  <div className="flex flex-col items-center">
+                    <img
+                      className="border-4 border-red rounded-full m-1 w-[64px] h-[64px] "
+                      src={item.targetedPic}
+                    />
+                    <span>{item.targetedBy}</span>
+                  </div>
+                  <img
+                    className=" rounded-full m-1 w-[64px] h-[64px] "
+                    src={vs}
+                  />
+                  <div className="flex flex-col items-center">
+                    <img
+                      className="border-4 border-red rounded-full m-1 w-[64px] h-[64px] "
+                      src={item.targetPic}
+                    />
+                    <span>{item.target}</span>
+                  </div>
+                </div>
+                <button
+                  className="bg-red-900 text-white px-1 rounded  "
+                  onClick={async () => {
+                    deleteDoc(doc(db, "targets", item.id));
+                  }}
+                >
+                  x
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-row flex-wrap bg-grey-900 gap-2 ">
+            {battlePart
+              .sort((a, b) => b.iniciativa > a.iniciativa)
+              .map((item, index) => (
+                <BattleListCard
+                  key={index}
+                  role={role}
+                  item={item}
+                  character={char}
+                  turn={getTurn(battlePart)}
+                />
+              ))}
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                joinBattle();
+                setActive(true)
+              }}
+              className="py-3 px-4 m-2 bg-green-500 rounded w-screen font-semibold text-white text-sm transition-colors"
+              disabled={active}
+            >
+              Entrar na batalha
             </button>
           </div>
-        ))}
-      </div>
-      <div className="flex flex-row flex-wrap bg-grey-900 gap-2 ">
-        {battlePart
-          .sort((a, b) => b.iniciativa > a.iniciativa)
-          .map((item, index) => (
-            <BattleListCard
-              key={index}
-              role={role}
-              item={item}
-              character={char}
-            />
-          ))}
-      </div>
-      <div>
-        <button
-          onClick={() => joinBattle()}
-          className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors"
-        >
-          Entrar na batalha
-        </button>
-      </div>
-    </div>
+        </div>
   );
 };

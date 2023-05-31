@@ -3,10 +3,9 @@ import { useState } from "react";
 import { db } from "../../firestore";
 
 export const NewBestiaryEntry = () => {
+  const [nome, setNome] = useState<string>();
+  const [nd, setNd] = useState<string>();
 
-  const [nome,setNome] = useState<string>()
-  const [nd,setNd] = useState<string>()
-    
   const [forca, setForca] = useState<any>(10);
   const [destreza, setDestreza] = useState<any>(10);
   const [constituicao, setConstituicao] = useState<any>(10);
@@ -29,6 +28,14 @@ export const NewBestiaryEntry = () => {
   const [baD, setBaD] = useState<any>(0);
 
   const [pic, setPic] = useState<string>("");
+
+  const [meleeW, setMeleeW] = useState<any>(0);
+  const [meleeWQnt, setMeleeWQnt] = useState<any>(0);
+  const [meleeWDmg, setMeleeWDmg] = useState<any>(0);
+
+  const [rangedW, setRangedW] = useState<any>(0);
+  const [rangedWQnt, setRangedWQnt] = useState<any>(0);
+  const [rangedWDmg, setRangedWDmg] = useState<any>(0);
 
   const [show, setShow] = useState<boolean>(true);
 
@@ -67,7 +74,13 @@ export const NewBestiaryEntry = () => {
     jpc: any,
     jps: any,
     ba: any,
-    baD: any
+    baD: any,
+    meleeW:any,
+    meleeWQnt:any,
+    meleeWDmg:any,
+    rangedW:any,
+    rangedWQnt:any,
+    rangedWDmg:any,
   ) => {
     const df = await addDoc(collection(db, "PdMs"), {
       id: 0,
@@ -80,8 +93,8 @@ export const NewBestiaryEntry = () => {
       inteligencia: int,
       sabedoria: sab,
       carisma: car,
-      pva: pva,
-      pv: (parseInt(pv)+getMod(constituicao)),
+      pva: parseInt(pv) + getMod(constituicao),
+      pv: parseInt(pv) + getMod(constituicao),
       ca: caB,
       armadura: armadura,
       escudo: escudo,
@@ -90,6 +103,12 @@ export const NewBestiaryEntry = () => {
       jps: jps,
       ba: ba,
       baD: baD,
+      meleeWeapon:meleeW,
+      meleeWeaponQnt:meleeWQnt,
+      meleeWeaponDmg:meleeWDmg,
+      rangedWeapon:rangedW,
+      rangedWeaponQnt:rangedWQnt,
+      rangedWeaponDmg:rangedWDmg
     });
     updateDoc(doc(db, "PdMs", df.id), { id: df.id });
   };
@@ -119,11 +138,23 @@ export const NewBestiaryEntry = () => {
           <div className="flex flex-col">
             <div className="flex flex-col">
               <span>Nome</span>
-              <input className="bg-grey-800 text-center" type="text" onChange={(e)=>{setNome(e.target.value)}} />
+              <input
+                className="bg-grey-800 text-center"
+                type="text"
+                onChange={(e) => {
+                  setNome(e.target.value);
+                }}
+              />
             </div>
             <div className="flex flex-col">
               <span>ND</span>
-              <input className="bg-grey-800 text-center w-12 " type="text" onChange={(e)=>{setNd(e.target.value)}} />
+              <input
+                className="bg-grey-800 text-center w-12 "
+                type="text"
+                onChange={(e) => {
+                  setNd(e.target.value);
+                }}
+              />
             </div>
           </div>
           <div className="flex">
@@ -241,19 +272,13 @@ export const NewBestiaryEntry = () => {
           PV
           <div className="flex flex-row items-center justify-center ">
             <div className="flex flex-col m-1 justify-center items-center ">
-              <span>Atual</span>
-              <input
-                className="bg-grey-800 w-16 text-center"
-                onChange={(e) => setPva(e.target.value)}
-                defaultValue="0"
-              />
-            </div>
-            <div className="flex flex-col m-1 justify-center items-center ">
               <span>Total</span>
               <div className="flex flex-row">
                 <input
                   className="bg-grey-800 w-16 text-center"
-                  onChange={(e) => setPv(e.target.value)}
+                  onChange={(e) => {
+                    setPv(e.target.value)
+                  }}
                   defaultValue="0"
                 />
                 {getMod(constituicao) >= 1
@@ -366,12 +391,89 @@ export const NewBestiaryEntry = () => {
               </div>
             </div>
           </div>
+          <div className="flex flex-col">
+            <div className="flex flex-col m-1 ">
+              <span>Dano ⚔️</span>
+              <div className="flex flex-row">
+                <div className="flex flex-row">
+                  <input
+                    defaultValue={meleeWQnt}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setMeleeWQnt(e.target.value)}
+                  />
+                  <span className="mx-1">d</span>
+                  <input
+                    defaultValue={meleeW}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setMeleeW(e.target.value)}
+                  />
+                  <span>+</span>
+                  <input
+                    defaultValue={meleeWDmg}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setMeleeWDmg(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col m-1 ">
+              <span>Dano 🏹</span>
+              <div className="flex flex-row">
+                <div className="flex flex-row">
+                  <input
+                    defaultValue={rangedWQnt}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setRangedWQnt(e.target.value)}
+                  />
+                  <span className="mx-1">d</span>
+                  <input
+                    defaultValue={rangedW}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setRangedW(e.target.value)}
+                  />
+                  <span>+</span>
+                  <input
+                    defaultValue={rangedWDmg}
+                    className="bg-grey-800 w-8 text-center "
+                    onChange={(e) => setRangedWDmg(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="flex flex-row">
-            <button className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors"
-            onClick={()=>{
-                createPdM(pic,nome,nd,forca,destreza,constituicao,inteligencia,sabedoria,carisma,pva,pv,ca,arm,esc,jpd,jpc,jps,ba,baD)
-            }}
-            
+            <button
+              className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors"
+              onClick={() => {
+                createPdM(
+                  pic,
+                  nome,
+                  nd,
+                  forca,
+                  destreza,
+                  constituicao,
+                  inteligencia,
+                  sabedoria,
+                  carisma,
+                  pva,
+                  pv,
+                  ca,
+                  arm,
+                  esc,
+                  jpd,
+                  jpc,
+                  jps,
+                  ba,
+                  baD,
+                  meleeW,
+                  meleeWQnt,
+                  meleeWDmg,
+                  rangedW,
+                  rangedWQnt,
+                  rangedWDmg
+                );
+              }}
             >
               Criar
             </button>
