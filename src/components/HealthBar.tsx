@@ -13,7 +13,6 @@ export const HealthBar = ({bgcolor,completed}) => {
     width: `${completed}%`,
     backgroundColor: bgcolor,
     borderRadius: "inherit",
-    textAlign: "right",
   };
 
   const labelStyles = {
