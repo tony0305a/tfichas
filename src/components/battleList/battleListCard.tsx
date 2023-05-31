@@ -291,7 +291,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
   return (
     <div
       className={
-        item.partId == turn.partId
+        item.partId == turn.partId && item.nome == turn.nome
           ? "flex flex-col items-center bg-grey-700 p-8 rounded "
           : "flex flex-col items-center bg-grey-900"
       }
@@ -345,7 +345,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
         />
         {role == 0 && item.belongsTo == undefined ? (
           <>
-            {item.partId == turn.partId ? (
+            {item.partId == turn.partId && item.nome == turn.nome ? (
               <div className="flex flex-col gap-2 ">
                 <div className="flex flex-col  border-4 border-red-900 ">
                   <div className="flex flex-col">
@@ -473,7 +473,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
         {item.belongsTo == localStorage.getItem("@login") ? (
           <>
             {" "}
-            {item.partId == turn.partId ? (
+            {item.partId == turn.partId && item.nome == turn.nome ? (
               <div className="flex flex-col gap-2 ">
                 <div className="flex flex-col  border-4 border-red-900 ">
                   <div className="flex flex-col">
