@@ -243,7 +243,6 @@ export const BattleListCard = ({ role, item, character, turn }) => {
     updateDoc(doc(db, "targets", df.id), { id: df.id });
   };
   const masterTarget = async (item: any) => {
-    console.log(`${turn.nome} atacará ${item.nome}`);
     const df = await addDoc(collection(db, "targets"), {
       target: item.nome,
       targetPva: item.pva,
@@ -273,7 +272,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
     updateDoc(d.ref, { turno: nt });
     onSnapshot(collection(db, "turn"), async (state) => {
       const bpart = await getDocs(collection(db, "battle"));
-      if (state.docs[0].data().turno > bpart.docs.length) {
+      if (state.docs[0].data().turno > bpart.docs.length - 1) {
         updateDoc(d.ref, { turno: 0 });
       }
     });
