@@ -3,10 +3,11 @@ import {
   collection,
   deleteDoc,
   doc,
+  query,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const BestiaryCard = ({ item }) => {
   const [nome, setNome] = useState<string>(item.name);
@@ -22,7 +23,7 @@ export const BestiaryCard = ({ item }) => {
   const [dv, setDv] = useState<any>(item.dv);
   const [pv, setPv] = useState<any>(item.pv);
   const [pva, setPva] = useState<any>(item.pva);
-  const [ca, setCa] = useState<any>(item.caBase);
+  const [ca, setCa] = useState<any>(item.ca);
   const [arm, setArm] = useState<any>(item.armadura);
   const [esc, setEsc] = useState<any>(item.escudo);
 
@@ -36,6 +37,12 @@ export const BestiaryCard = ({ item }) => {
   const [pic, setPic] = useState<string>(item.pic);
 
   const [editMode, setEditMode] = useState(true);
+
+
+  useEffect(()=>{
+
+
+  },[])
 
   const getMod = (value: string) => {
     if (parseInt(value) <= 8) {
@@ -86,7 +93,7 @@ export const BestiaryCard = ({ item }) => {
       carisma: car,
       pva: pva,
       pv: parseInt(pv) + getMod(constituicao),
-      caBase: caB,
+      ca: caB,
       armadura: armadura,
       escudo: escudo,
       jpd: jpd,
@@ -97,6 +104,32 @@ export const BestiaryCard = ({ item }) => {
     });
   };
 
+  const toBattle = async () => {
+    const df = await addDoc(collection(db, "battle"), {
+      id: 0,
+      pic: item.pic,
+      nome: item.name,
+      nd: item.nd,
+      força: item.força,
+      destreza: item.destreza,
+      constituicao: item.constituicao,
+      inteligencia: item.inteligencia,
+      sabedoria: item.sabedoria,
+      carisma: item.carisma,
+      pva: item.pva,
+      pv: parseInt(item.pv) + getMod(item.constituicao),
+      ca: item.ca,
+      armadura: item.armadura,
+      escudo: item.escudo,
+      jpd: item.jpd,
+      jpc: item.jpc,
+      jps: item.jps,
+      ba: item.ba,
+      baD: item.baD,
+      iniciativa: Math.floor(Math.random() * 20) + 1 + getMod(item.destreza),
+    });
+    updateDoc(doc(db, "battle", df.id), { id: df.id });
+  };
   return (
     <>
       {editMode ? (
@@ -196,7 +229,7 @@ export const BestiaryCard = ({ item }) => {
                   <span>CA</span>
                   <div className="flex flex-row">
                     <span>
-                      {parseInt(item.caBase) +
+                      {parseInt(item.ca) +
                         parseInt(item.armadura) +
                         parseInt(item.escudo) +
                         getMod(item.destreza)}
@@ -214,35 +247,7 @@ export const BestiaryCard = ({ item }) => {
             </div>
             <div className="flex flex-row">
               <button
-                onClick={async () => {
-                  const df = await addDoc(collection(db, "battle"), {
-                    id: 0,
-                    pic: item.pic,
-                    name: item.name,
-                    nd: item.nd,
-                    força: item.força,
-                    destreza: item.destreza,
-                    constituicao: item.constituicao,
-                    inteligencia: item.inteligencia,
-                    sabedoria: item.sabedoria,
-                    carisma: item.carisma,
-                    pva: item.pva,
-                    pv: parseInt(item.pv) + getMod(item.constituicao),
-                    caBase: item.caBase,
-                    armadura: item.armadura,
-                    escudo: item.escudo,
-                    jpd: item.jpd,
-                    jpc: item.jpc,
-                    jps: item.jps,
-                    ba: item.ba,
-                    baD: item.baD,
-                    iniciativa:
-                      Math.floor(Math.random() * 20) +
-                      1 +
-                      getMod(item.destreza),
-                  });
-                  updateDoc(doc(db, "battle", df.id), { id: df.id });
-                }}
+                onClick={() => toBattle()}
                 className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors"
               >
                 To Battle!
@@ -252,6 +257,7 @@ export const BestiaryCard = ({ item }) => {
               className="py-1 px-1 m-2 bg-red-900 rounded font-semibold text-white text-sm transition-colors"
               onClick={() => {
                 setEditMode(false);
+                console.log(item)
               }}
             >
               Editar
@@ -571,11 +577,12 @@ export const BestiaryCard = ({ item }) => {
                 setEditMode(true);
               }}
             >
-              Editar
+              Salvar
             </button>
             <button
               className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors"
-              type="reset"
+              onClick={()=>{
+              }}
             >
               Deletar
             </button>

@@ -82,7 +82,7 @@ export const NewBestiaryEntry = () => {
       carisma: car,
       pva: pva,
       pv: (parseInt(pv)+getMod(constituicao)),
-      caBase: caB,
+      ca: caB,
       armadura: armadura,
       escudo: escudo,
       jpd: jpd,
@@ -370,7 +370,6 @@ export const NewBestiaryEntry = () => {
             <button className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors"
             onClick={()=>{
                 createPdM(pic,nome,nd,forca,destreza,constituicao,inteligencia,sabedoria,carisma,pva,pv,ca,arm,esc,jpd,jpc,jps,ba,baD)
-                setShow(false)
             }}
             
             >
