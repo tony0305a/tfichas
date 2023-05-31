@@ -395,7 +395,8 @@ export const BattleListCard = ({ role, item, character, turn }) => {
                   <button
                     className="bg-red-900 p-1 rounded-lg "
                     onClick={() => {
-                      meleeAttack(modMelee, modMeleeDmg);
+                      meleeAttack(modMelee, modMeleeDmg)
+                      nextTurn();
                     }}
                   >
                     ⚔️
@@ -451,6 +452,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
                     className="bg-green-500 p-1 rounded-lg "
                     onClick={() => {
                       rangedAttack(modRanged, modRangedDmg);
+                      nextTurn()
                     }}
                   >
                     🏹
@@ -524,6 +526,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
                     className="bg-red-900 p-1 rounded-lg "
                     onClick={() => {
                       meleeAttack(modMelee, modMeleeDmg);
+                      nextTurn()
                     }}
                   >
                     ⚔️
@@ -579,6 +582,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
                     className="bg-green-500 p-1 rounded-lg "
                     onClick={() => {
                       rangedAttack(modRanged, modRangedDmg);
+                      nextTurn()
                     }}
                   >
                     🏹
