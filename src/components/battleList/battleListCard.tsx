@@ -273,7 +273,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
     updateDoc(d.ref, { turno: nt });
     onSnapshot(collection(db, "turn"), async (state) => {
       const bpart = await getDocs(collection(db, "battle"));
-      if (state.docs[0].data().turno > bpart.docs.length - 1) {
+      if (state.docs[0].data().turno > bpart.docs.length) {
         updateDoc(d.ref, { turno: 0 });
       }
     });
@@ -340,7 +340,11 @@ export const BattleListCard = ({ role, item, character, turn }) => {
           <></>
         )}
         <HealthBar
-          completed={Math.floor((parseInt(item.pva) / parseInt(item.pv)) * 100)}
+          completed={
+            Math.floor((parseInt(item.pva) / parseInt(item.pv)) * 100) <= 0
+              ? 0
+              : Math.floor((parseInt(item.pva) / parseInt(item.pv)) * 100)
+          }
           bgcolor={"#ef4444"}
         />
         {role == 0 && item.belongsTo == undefined ? (
@@ -395,7 +399,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
                   <button
                     className="bg-red-900 p-1 rounded-lg "
                     onClick={() => {
-                      meleeAttack(modMelee, modMeleeDmg)
+                      meleeAttack(modMelee, modMeleeDmg);
                       nextTurn();
                     }}
                   >
@@ -452,7 +456,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
                     className="bg-green-500 p-1 rounded-lg "
                     onClick={() => {
                       rangedAttack(modRanged, modRangedDmg);
-                      nextTurn()
+                      nextTurn();
                     }}
                   >
                     🏹
@@ -526,7 +530,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
                     className="bg-red-900 p-1 rounded-lg "
                     onClick={() => {
                       meleeAttack(modMelee, modMeleeDmg);
-                      nextTurn()
+                      nextTurn();
                     }}
                   >
                     ⚔️
@@ -582,7 +586,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
                     className="bg-green-500 p-1 rounded-lg "
                     onClick={() => {
                       rangedAttack(modRanged, modRangedDmg);
-                      nextTurn()
+                      nextTurn();
                     }}
                   >
                     🏹
