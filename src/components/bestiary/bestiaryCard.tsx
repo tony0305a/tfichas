@@ -129,7 +129,7 @@ export const BestiaryCard = ({ item }) => {
     const q = query(collection(db,"battle"))
     const ver = await getDocs(q)
       ver.forEach((vItem)=>{
-        if(vItem.data().nome == item.nome){
+        if(vItem.data().nome == item.name){
           nTo = `${nTo} #${rCount}`
         }
       })
