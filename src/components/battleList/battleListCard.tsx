@@ -319,6 +319,13 @@ export const BattleListCard = ({ role, item, character, turn }) => {
         }}
         className="border-4 border-red rounded-full m-1 w-[148px] h-[148px] "
       />
+      <button
+        onClick={() => {
+          nextTurn();
+        }}
+      >
+        Botão de panico
+      </button>
       <div className="flex flex-col items-center ">
         <span>{item.name || item.nome}</span>
         {item.belongsTo != undefined ? (
