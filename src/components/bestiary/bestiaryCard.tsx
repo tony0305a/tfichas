@@ -8,7 +8,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firestore";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { EtcContext, useEtc } from "../../contexts/etcProvider";
 
 export const BestiaryCard = ({ item }) => {
   const [nome, setNome] = useState<string>(item.name);
@@ -45,27 +46,13 @@ export const BestiaryCard = ({ item }) => {
   const [rangedWQnt, setRangedWQnt] = useState<any>(item.rangedWeaponQnt);
   const [rangedWDmg, setRangedWDmg] = useState<any>(item.rangedWeaponDmg);
 
-  const [rCount,setRCount] = useState<any>(0)
+  const [rCount, setRCount] = useState<any>(0);
 
   const [editMode, setEditMode] = useState(true);
 
-  useEffect(() => {}, []);
+  const { getMod, rollDx, logRoll } = useEtc();
 
-  const getMod = (value: string) => {
-    if (parseInt(value) <= 8) {
-      return -1;
-    } else if (parseInt(value) <= 12) {
-      return 0;
-    } else if (parseInt(value) <= 14) {
-      return 1;
-    } else if (parseInt(value) <= 16) {
-      return 2;
-    } else if (parseInt(value) <= 18) {
-      return 3;
-    } else if (parseInt(value) > 19) {
-      return 4;
-    }
-  };
+  useEffect(() => {}, []);
 
   const updatePdM = async (
     pic: any,
@@ -87,12 +74,12 @@ export const BestiaryCard = ({ item }) => {
     jps: any,
     ba: any,
     baD: any,
-    meleeW:any,
-    meleeWQnt:any,
-    meleeWDmg:any,
-    rangedW:any,
-    rangedWQnt:any,
-    rangedWDmg:any,
+    meleeW: any,
+    meleeWQnt: any,
+    meleeWDmg: any,
+    rangedW: any,
+    rangedWQnt: any,
+    rangedWDmg: any
   ) => {
     await updateDoc(doc(db, "PdMs", item.id), {
       pic: pic,
@@ -114,29 +101,30 @@ export const BestiaryCard = ({ item }) => {
       jps: jps,
       ba: ba,
       baD: baD,
-      meleeWeapon:meleeW,
-      meleeWeaponQnt:meleeWQnt,
-      meleeWeaponDmg:meleeWDmg,
-      rangedWeapon:rangedW,
-      rangedWeaponQnt:rangedWQnt,
-      rangedWeaponDmg:rangedWDmg
+      meleeWeapon: meleeW,
+      meleeWeaponQnt: meleeWQnt,
+      meleeWeaponDmg: meleeWDmg,
+      rangedWeapon: rangedW,
+      rangedWeaponQnt: rangedWQnt,
+      rangedWeaponDmg: rangedWDmg,
     });
   };
 
   const toBattle = async () => {
-    setRCount(rCount+1)
-    var nTo = item.name
-    const q = query(collection(db,"battle"))
-    const ver = await getDocs(q)
-      ver.forEach((vItem)=>{
-        if(vItem.data().nome == item.name){
-          nTo = `${nTo} #${rCount}`
-        }
-      })
+    setRCount(rCount + 1);
+    var nTo = item.name;
+    var dRoll = rollDx(20);
+    var initRoll = dRoll + getMod(item.destreza);
+    const q = query(collection(db, "battle"));
+    const ver = await getDocs(q);
+    ver.forEach((vItem) => {
+      if (vItem.data().nome == item.name) {
+        nTo = `${nTo} #${rCount}`;
+      }
+    });
     const df = await addDoc(collection(db, "battle"), {
-      id: 0,
       pic: item.pic,
-      nome:nTo,
+      nome: nTo,
       nd: item.nd,
       força: item.força,
       destreza: item.destreza,
@@ -154,16 +142,21 @@ export const BestiaryCard = ({ item }) => {
       jps: item.jps,
       ba: item.ba,
       baD: item.baD,
-      iniciativa: Math.floor(Math.random() * 20) + 1 + getMod(item.destreza),
-      meleeWeapon:item.meleeWeapon,
-      meleeWeaponQnt:item.meleeWeaponQnt,
-      meleeWeaponDmg:item.meleeWeaponDmg,
-      rangedWeapon:item.rangedWeapon,
-      rangedWeaponQnt:item.rangedWeaponQnt,
-      rangedWeaponDmg:item.rangedWeaponDmg,
-      partId:item.id
+      iniciativa: initRoll,
+      meleeWeapon: item.meleeWeapon,
+      meleeWeaponQnt: item.meleeWeaponQnt,
+      meleeWeaponDmg: item.meleeWeaponDmg,
+      rangedWeapon: item.rangedWeapon,
+      rangedWeaponQnt: item.rangedWeaponQnt,
+      rangedWeaponDmg: item.rangedWeaponDmg,
+      id: item.id,
     });
-    updateDoc(doc(db, "battle", df.id), { id: df.id });
+    updateDoc(doc(db, "battle", df.id), { battleId: df.id });
+    logRoll(
+      nTo,
+      dRoll,
+      `| Mod. DES ${getMod(item.destreza)} Iniciativa Total [${initRoll}]`
+    );
   };
   return (
     <>
@@ -625,9 +618,8 @@ export const BestiaryCard = ({ item }) => {
                   />
                 </div>
               </div>
-            </div> 
+            </div>
           </div>
-
           <div className="flex flex-row">
             <button
               className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors"

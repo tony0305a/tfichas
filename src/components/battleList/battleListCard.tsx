@@ -12,10 +12,15 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../../firestore";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { HealthBar } from "../HealthBar";
+import { useEtc } from "../../contexts/etcProvider";
+import { AuthContext } from "../../contexts/authProvider";
 
-export const BattleListCard = ({ role, item, character, turn }) => {
+export const BattleListCard = ({ role, item, turn }) => {
+  const { getTime, getMod } = useEtc();
+  const { sessionCharacters } = useContext(AuthContext);
+
   const [modMelee, setModMelee] = useState<any>(0);
   const [meleeW, setMeleeW] = useState<any>(
     item.meleeWeapon || turn.meleeWeapon
@@ -35,22 +40,9 @@ export const BattleListCard = ({ role, item, character, turn }) => {
   const [modMeleeDmg, setModMeleeDmg] = useState<any>(0);
   const [modRangedDmg, setModRangedDmg] = useState<any>(0);
 
-  const meleeAttack = async (meleeModHit, meleeModDmg) => {
-    var today = new Date();
-    var h: any = today.getHours();
-    if (today.getHours() < 10) {
-      h = `0${h}`;
-    }
-    var m: any = today.getMinutes();
-    if (today.getMinutes() < 10) {
-      m = `0${m}`;
-    }
-    var s: any = today.getSeconds();
-    if (today.getSeconds() < 10) {
-      s = `0${s}`;
-    }
+  const character = sessionCharacters[0];
 
-    var time = `${h}:${m}:${s}`;
+  const meleeAttack = async (meleeModHit, meleeModDmg) => {
     const q = query(collection(db, "targets"));
     const sta = await getDocs(q);
     var diceRoll = Math.floor(Math.random() * 20 + 1);
@@ -58,7 +50,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
     sta.forEach(async (docItem) => {
       if (hit > parseInt(docItem.data().targetCa)) {
         addDoc(collection(db, "rolagens"), {
-          time: time,
+          time: getTime(),
           roll: diceRoll,
           name: docItem.data().targetedBy,
           text: `| Mod. Acerto [${
@@ -78,7 +70,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
           dmg = dmg + dmgDiceRoll;
         }
         addDoc(collection(db, "rolagens"), {
-          time: time,
+          time: getTime(),
           roll: dmg,
           name: docItem.data().targetedBy,
           text: `<-[${docItem.data().targetedMeleeWQnt}d${
@@ -102,7 +94,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
         updateDoc(doc(db, "battle", d.docs[0].id), { pva: newPva });
       } else {
         addDoc(collection(db, "rolagens"), {
-          time: time,
+          time: getTime(),
           roll: diceRoll,
           name: docItem.data().targetedBy,
           text: `| Mod. Acerto [${
@@ -202,21 +194,6 @@ export const BattleListCard = ({ role, item, character, turn }) => {
       }
     });
   };
-  const getMod = (value: string) => {
-    if (parseInt(value) <= 8) {
-      return -1;
-    } else if (parseInt(value) <= 12) {
-      return 0;
-    } else if (parseInt(value) <= 14) {
-      return 1;
-    } else if (parseInt(value) <= 16) {
-      return 2;
-    } else if (parseInt(value) <= 18) {
-      return 3;
-    } else if (parseInt(value) > 19) {
-      return 4;
-    }
-  };
   const targetList = async (item: any, character: any) => {
     const df = await addDoc(collection(db, "targets"), {
       target: item.nome,
@@ -227,6 +204,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
         parseInt(item.escudo) +
         getMod(item.destreza),
       targetPic: item.pic,
+      targetBattleId:item.battleId,
 
       targetedBy: character.nome,
       targetedMeleeW: character.meleeWeapon,
@@ -238,10 +216,12 @@ export const BattleListCard = ({ role, item, character, turn }) => {
       targetedFor: character.força,
       targetedDes: character.destreza,
       targetedPic: character.pic,
+      targetedBattleId:character.battleId,
       id: 0,
     });
     updateDoc(doc(db, "targets", df.id), { id: df.id });
   };
+
   const masterTarget = async (item: any) => {
     const df = await addDoc(collection(db, "targets"), {
       target: item.nome,
@@ -252,6 +232,8 @@ export const BattleListCard = ({ role, item, character, turn }) => {
         parseInt(item.escudo) +
         getMod(item.destreza),
       targetPic: item.pic,
+      targetBattleId:item.battleId,
+
       targetedBy: turn.nome,
       targetedMeleeW: turn.meleeWeapon,
       targetedMeleeWQnt: turn.meleeWeaponQnt,
@@ -262,12 +244,14 @@ export const BattleListCard = ({ role, item, character, turn }) => {
       targetedFor: turn.força,
       targetedDes: turn.destreza,
       targetedPic: turn.pic,
+      targetedBattleId:turn.battleId,
       id: 0,
     });
     updateDoc(doc(db, "targets", df.id), { id: df.id });
   };
   const nextTurn = async () => {
-    const d = await getDoc(doc(db, "turn", "lddm17IafCgfNx998Uig"));
+    //"lddm17IafCgfNx998Uig"
+    const d = await getDoc(doc(db, "turn", "EeQ7ayNeRaewAn4oXdgF"));
     const nt = d.data().turno + 1;
     updateDoc(d.ref, { turno: nt });
     onSnapshot(collection(db, "turn"), async (state) => {
@@ -281,6 +265,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
     df.forEach((i) => {
       deleteDoc(i.ref);
     });
+    console.log(turn);
   };
 
   if (character == undefined) {
@@ -290,7 +275,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
   return (
     <div
       className={
-        item.partId == turn.partId && item.nome == turn.nome
+        item.battleId == turn.battleId && item.nome == turn.nome
           ? "flex flex-col items-center bg-grey-700 p-8 rounded "
           : "flex flex-col items-center bg-grey-900"
       }
@@ -299,7 +284,7 @@ export const BattleListCard = ({ role, item, character, turn }) => {
         <button
           className=" p-1 bg-red rounded font-semibold text-white text-sm transition-colors"
           onClick={() => {
-            deleteDoc(doc(db, "battle", item.id));
+            deleteDoc(doc(db, "battle", item.battleId));
           }}
         >
           x
@@ -318,13 +303,6 @@ export const BattleListCard = ({ role, item, character, turn }) => {
         }}
         className="border-4 border-red rounded-full m-1 w-[148px] h-[148px] "
       />
-      <button
-        onClick={() => {
-          nextTurn();
-        }}
-      >
-        Botão de panico
-      </button>
       <div className="flex flex-col items-center ">
         <span>{item.name || item.nome}</span>
         {item.belongsTo != undefined ? (
@@ -353,269 +331,6 @@ export const BattleListCard = ({ role, item, character, turn }) => {
           }
           bgcolor={"#ef4444"}
         />
-        {role == 0 && item.belongsTo == undefined ? (
-          <>
-            {item.partId == turn.partId && item.nome == turn.nome ? (
-              <div className="flex flex-col gap-2 ">
-                <div className="flex flex-col  border-4 border-red-900 ">
-                  <div className="flex flex-col">
-                    <div className="flex flex-col">
-                      <span>Mod. Acerto</span>
-                      <div className="flex flex-row">
-                        <span>+</span>
-                        <input
-                          defaultValue={modMelee}
-                          className="bg-grey-800 w-8 "
-                          onChange={(e) => setModMelee(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span>Mod. Dano</span>
-                      <div className="flex flex-row">
-                        <span>+</span>
-                        <input
-                          defaultValue={modMeleeDmg}
-                          className="bg-grey-800 w-8 "
-                          onChange={(e) => setModMeleeDmg(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span>Arma</span>
-                      <div className="flex flex-row">
-                        <input
-                          defaultValue={meleeWQnt}
-                          className="bg-grey-800 w-8 text-center "
-                          onChange={(e) => setMeleeWQnt(e.target.value)}
-                          type="number"
-                        />
-                        <span className="mx-1">d</span>
-                        <input
-                          defaultValue={meleeW}
-                          className="bg-grey-800 w-8 text-center "
-                          onChange={(e) => setMeleeW(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    className="bg-red-900 p-1 rounded-lg "
-                    onClick={() => {
-                      meleeAttack(modMelee, modMeleeDmg);
-                      nextTurn();
-                    }}
-                  >
-                    ⚔️
-                  </button>
-                </div>
-
-                <div className="flex flex-col border-4 border-red-900 ">
-                  <div className="flex flex-col">
-                    <div className="flex flex-col">
-                      <span>Mod. Acerto</span>
-                      <div className="flex flex-row">
-                        <span>+</span>
-                        <input
-                          defaultValue={modRanged}
-                          className="bg-grey-800 w-8 "
-                          onChange={(e) => setModRanged(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span>Mod. Dano</span>
-                      <div className="flex flex-row">
-                        <span>+</span>
-                        <input
-                          defaultValue={modRangedDmg}
-                          className="bg-grey-800 w-8 "
-                          onChange={(e) => setModRangedDmg(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span>Arma</span>
-                      <div className="flex flex-row">
-                        <input
-                          defaultValue={rangedWQnt}
-                          className="bg-grey-800 w-8 text-center "
-                          onChange={(e) => setRangedWQnt(e.target.value)}
-                          type="number"
-                        />
-                        <span className="mx-1">d</span>
-                        <input
-                          defaultValue={rangedW}
-                          className="bg-grey-800 w-8 text-center "
-                          onChange={(e) => setRangedW(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    className="bg-green-500 p-1 rounded-lg "
-                    onClick={() => {
-                      rangedAttack(modRanged, modRangedDmg);
-                      nextTurn();
-                    }}
-                  >
-                    🏹
-                  </button>
-                </div>
-                <button
-                  onClick={nextTurn}
-                  className="px-2 py-2 bg-red-900 rounded"
-                >
-                  Finalizar{" ->"}
-                </button>
-              </div>
-            ) : (
-              <></>
-            )}
-          </>
-        ) : (
-          <></>
-        )}
-        {item.belongsTo == localStorage.getItem("@login") ? (
-          <>
-            {" "}
-            {item.partId == turn.partId && item.nome == turn.nome ? (
-              <div className="flex flex-col gap-2 ">
-                <div className="flex flex-col  border-4 border-red-900 ">
-                  <div className="flex flex-col">
-                    <div className="flex flex-col">
-                      <span>Mod. Acerto</span>
-                      <div className="flex flex-row">
-                        <span>+</span>
-                        <input
-                          defaultValue={modMelee}
-                          className="bg-grey-800 w-8 "
-                          onChange={(e) => setModMelee(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span>Mod. Dano</span>
-                      <div className="flex flex-row">
-                        <span>+</span>
-                        <input
-                          defaultValue={modMeleeDmg}
-                          className="bg-grey-800 w-8 "
-                          onChange={(e) => setModMeleeDmg(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span>Arma</span>
-                      <div className="flex flex-row">
-                        <input
-                          defaultValue={meleeWQnt}
-                          className="bg-grey-800 w-8 text-center "
-                          onChange={(e) => setMeleeWQnt(e.target.value)}
-                          type="number"
-                        />
-                        <span className="mx-1">d</span>
-                        <input
-                          defaultValue={meleeW}
-                          className="bg-grey-800 w-8 text-center "
-                          onChange={(e) => setMeleeW(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    className="bg-red-900 p-1 rounded-lg "
-                    onClick={() => {
-                      meleeAttack(modMelee, modMeleeDmg);
-                      nextTurn();
-                    }}
-                  >
-                    ⚔️
-                  </button>
-                </div>
-
-                <div className="flex flex-col border-4 border-red-900 ">
-                  <div className="flex flex-col">
-                    <div className="flex flex-col">
-                      <span>Mod. Acerto</span>
-                      <div className="flex flex-row">
-                        <span>+</span>
-                        <input
-                          defaultValue={modRanged}
-                          className="bg-grey-800 w-8 "
-                          onChange={(e) => setModRanged(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span>Mod. Dano</span>
-                      <div className="flex flex-row">
-                        <span>+</span>
-                        <input
-                          defaultValue={modRangedDmg}
-                          className="bg-grey-800 w-8 "
-                          onChange={(e) => setModRangedDmg(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span>Arma</span>
-                      <div className="flex flex-row">
-                        <input
-                          defaultValue={rangedWQnt}
-                          className="bg-grey-800 w-8 text-center "
-                          onChange={(e) => setRangedWQnt(e.target.value)}
-                          type="number"
-                        />
-                        <span className="mx-1">d</span>
-                        <input
-                          defaultValue={rangedW}
-                          className="bg-grey-800 w-8 text-center "
-                          onChange={(e) => setRangedW(e.target.value)}
-                          type="number"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    className="bg-green-500 p-1 rounded-lg "
-                    onClick={() => {
-                      rangedAttack(modRanged, modRangedDmg);
-                      nextTurn();
-                    }}
-                  >
-                    🏹
-                  </button>
-                </div>
-                {item.nome == turn.nome ? (
-                  <button
-                    onClick={nextTurn}
-                    className="px-2 py-2 bg-red-900 rounded"
-                  >
-                    Finalizar{" ->"}
-                  </button>
-                ) : (
-                  <></>
-                )}
-              </div>
-            ) : (
-              <></>
-            )}
-          </>
-        ) : (
-          <></>
-        )}
       </div>
     </div>
   );

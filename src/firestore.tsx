@@ -12,7 +12,7 @@ import { getFirestore } from "firebase/firestore";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-const firebaseConfig = {
+const firebaseConfig1 = {
     apiKey: "AIzaSyCLYRXKvwTB9xyAMClg04luQsL8vyaj6VI",
     authDomain: "tfichas-a6672.firebaseapp.com",
     projectId: "tfichas-a6672",
@@ -21,6 +21,24 @@ const firebaseConfig = {
     appId: "1:150529796747:web:c4db0ee94d1147c485428e"
 
   };
+  const firebaseConfig = {
+
+    apiKey: "AIzaSyA4-0eJeXOjf8jUcjbT0oIEjBylfdHrtJA",
+  
+    authDomain: "westeros-war.firebaseapp.com",
+  
+    projectId: "westeros-war",
+  
+    storageBucket: "westeros-war.appspot.com",
+  
+    messagingSenderId: "943630611565",
+  
+    appId: "1:943630611565:web:112cb4ebf1f01dcefabb64",
+  
+    measurementId: "G-13HPCW5B3V"
+  
+  };
+  
 
 // Initialize Firebase
 

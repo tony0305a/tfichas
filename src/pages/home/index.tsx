@@ -5,7 +5,7 @@ import { Logo } from "../../components/Logo";
 import { Text } from "../../components/Text";
 import { TextInput } from "../../components/TextInput";
 import { Buttom } from "../../components/Buttom";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { db } from "../../firestore";
 import {
   addDoc,
@@ -36,60 +36,46 @@ import { EditCharacter } from "../../components/editCharacter";
 import { BattleGrid } from "../../components/battleGrid";
 import { Bestiary } from "../../components/bestiary";
 import { BattleList } from "../../components/battleList";
+import { EtcContext, useEtc } from "../../contexts/etcProvider";
+import { AuthContext } from "../../contexts/authProvider";
 
 export const Home = () => {
-  const [rolls, setRolls] = useState<any>([]);
+  // const [rolls, setRolls] = useState<any>([]);
   const [rolledValue, setRolledValue] = useState<number>(0);
   const [diceBoard, setDiceboard] = useState<any>([]);
-  const [sessionName, setSessionName] = useState<string>();
-  const [sessionLogin, setSessionLogin] = useState<string>();
-  const [sessionRole, setSessionRole] = useState<number>();
-  const [sessionCharacter, setSessionCharacters] = useState<any>([]);
   const [show, setShow] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [notes, setNotes] = useState<any>("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const auth = async () => {
-      try {
-        const q = query(
-          collection(db, "users"),
-          where("id", "==", localStorage.getItem("uid"))
-        );
-        const stateQuery = await getDocs(q);
-        var login = stateQuery.docs[0].data().login;
-        setSessionName(stateQuery.docs[0].data().name);
-        setSessionLogin(stateQuery.docs[0].data().login);
-        setSessionRole(stateQuery.docs[0].data().role);
-      } catch (e) {
-        navigate("/");
-      }
-    };
+  const {
+    roll,
+    getMod,
+    unsubRolls,
+    rolls,
+    rollDx,
+    logRoll,
+  } = useEtc();
+  const { auth, sessionName, sessionCharacters, sessionRole } =
+    useContext(AuthContext);
 
-    const q = query(collection(db, "rolagens"), orderBy("createdAt", "desc"));
-    const unsub = onSnapshot(q, (querySnapshot: any) => {
-      setRolls([{}]);
-      querySnapshot.forEach((doc: any) => {
-        setRolls((prevState: any) => [...prevState, doc.data()]);
-      });
-    });
-    const cq = query(
-      collection(db, "characters"),
-      where("belongsTo", "==", localStorage.getItem("@login"))
-    );
-    const unsub2 = onSnapshot(cq, (querySnap) => {
-      setSessionCharacters([{}]);
-      querySnap.forEach((doc) => {
-        setSessionCharacters((prevState: any) => [...prevState, doc.data()]);
-      });
-    });
-    auth();
+  useEffect(() => {
+    try {
+      auth();
+    } catch (e) {
+      navigate("/");
+    }
     return () => {
-      unsub();
-      unsub2();
+      unsubRolls();
+      auth()
     };
   }, []);
+
+  const logoff = () => {
+    localStorage.removeItem("@login");
+    localStorage.removeItem("uid");
+    navigate("/");
+  };
 
   const addToBoard = async (dice: any, value: number) => {
     setDiceboard((prevState) => [...prevState, { dice: dice, value: value }]);
@@ -98,111 +84,17 @@ export const Home = () => {
   const removeFromBoard = (index: any) => {
     var newBoard = diceBoard.splice(index);
     setDiceboard(newBoard);
-    console.log(diceBoard);
-  };
-
-  const roll = () => {
-    let allRolls = [];
-    diceBoard.map((item) => {
-      var diceRoll = Math.floor(Math.random() * item.value) + 1;
-      allRolls.push({ dice: `d${item.value}`, value: diceRoll });
-    });
-    let sum = 0;
-    let text = "| ";
-    allRolls.map((item) => {
-      if (item.dice != "dundefined") {
-        sum = sum + item.value;
-        text = text + ` ${item.dice}->[${item.value}] `;
-      }
-    });
-    var today = new Date();
-
-    var h: any = today.getHours();
-    if (today.getHours() < 10) {
-      h = `0${h}`;
-    }
-
-    var m: any = today.getMinutes();
-    if (today.getMinutes() < 10) {
-      m = `0${m}`;
-    }
-
-    var s: any = today.getSeconds();
-    if (today.getSeconds() < 10) {
-      s = `0${s}`;
-    }
-
-    var time = `${h}:${m}:${s}`;
-    setRolls((prevState) => [
-      ...prevState,
-      { time: time, name: sessionName, roll: sum, text: text },
-    ]);
-    setRolledValue(sum);
-    addDoc(collection(db, "rolagens"), {
-      time: time,
-      name: sessionName,
-      roll: sum,
-      text: text,
-      createdAt: serverTimestamp(),
-    });
-  };
-  const logoff = () => {
-    localStorage.removeItem("uid");
-    localStorage.removeItem("@login");
-    navigate("/");
-  };
-  const getMod = (value: string) => {
-    if (parseInt(value) <= 8) {
-      return -1;
-    } else if (parseInt(value) <= 12) {
-      return 0;
-    } else if (parseInt(value) <= 14) {
-      return 1;
-    } else if (parseInt(value) <= 16) {
-      return 2;
-    } else if (parseInt(value) <= 18) {
-      return 3;
-    } else if (parseInt(value) > 19) {
-      return 4;
-    }
   };
 
   const attrTest = (type: string, attr: string, name: string) => {
-    var today = new Date();
-    var h: any = today.getHours();
-    if (today.getHours() < 10) {
-      h = `0${h}`;
-    }
-    var m: any = today.getMinutes();
-    if (today.getMinutes() < 10) {
-      m = `0${m}`;
-    }
-    var s: any = today.getSeconds();
-    if (today.getSeconds() < 10) {
-      s = `0${s}`;
-    }
-
-    var time = `${h}:${m}:${s}`;
-
-    var diceRoll = Math.floor(Math.random() * 20) + 1;
+    var diceRoll = rollDx(20);
     var text: any;
     if (diceRoll - getMod(attr) <= parseInt(attr)) {
-      text = `[${name}] com mod ${getMod(attr)} passa no teste de ${type} `;
+      text = `[${name}] Mod. ${getMod(attr)} passa no teste de ${type} `;
     } else {
-      text = `[${name}] com mod ${getMod(attr)} não passa no teste de ${type}`;
+      text = `[${name}] Mod. mod ${getMod(attr)} não passa no teste de ${type}`;
     }
-
-    setRolls((prevState) => [
-      ...prevState,
-      { time: time, name: sessionName, roll: diceRoll, text: text },
-    ]);
-    addDoc(collection(db, "rolagens"), {
-      time: time,
-      name: sessionName,
-      roll: diceRoll,
-      text: text,
-      createdAt: serverTimestamp(),
-    });
+    logRoll(sessionName, diceRoll, text);
   };
 
   const saveThorws = (
@@ -211,41 +103,14 @@ export const Home = () => {
     base: string,
     name: string
   ) => {
-    var today = new Date();
-    var h: any = today.getHours();
-    if (today.getHours() < 10) {
-      h = `0${h}`;
-    }
-    var m: any = today.getMinutes();
-    if (today.getMinutes() < 10) {
-      m = `0${m}`;
-    }
-    var s: any = today.getSeconds();
-    if (today.getSeconds() < 10) {
-      s = `0${s}`;
-    }
-
-    var time = `${h}:${m}:${s}`;
-
-    var diceRoll = Math.floor(Math.random() * 20) + 1;
+    var diceRoll = rollDx(20);
     var text: any;
     if (diceRoll <= parseInt(base) + getMod(attr)) {
       text = ` [${name}] passou na ${type}`;
     } else {
       text = ` [${name}] não passou na ${type}`;
     }
-
-    setRolls((prevState) => [
-      ...prevState,
-      { time: time, name: sessionName, roll: diceRoll, text: text },
-    ]);
-    addDoc(collection(db, "rolagens"), {
-      time: time,
-      name: sessionName,
-      roll: diceRoll,
-      text: text,
-      createdAt: serverTimestamp(),
-    });
+    logRoll(sessionName, diceRoll, text);
   };
 
   const addNote = (id: any, notes: any) => {
@@ -326,8 +191,10 @@ export const Home = () => {
 
           <div className="flex flex-row mt-2">
             <button
+              onClick={() => {
+                roll(diceBoard);
+              }}
               className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-black text-sm w-full transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-              onClick={roll}
             >
               Rolar
             </button>
@@ -373,277 +240,283 @@ export const Home = () => {
           </span>
         </div>
         <div className="flex flex-row flex-wrap">
-          {sessionCharacter.map((item: any, id: any) =>
-            id >= 1 ? (
-              <div
-                key={id}
-                className=" w-screen flex flex-col mt-2 m-1 rounded-t-md border-4 border-red-900 xl:w-2/5  "
-              >
-                <div className="bg-red-900 flex flex-row w-screen lg:w-full xl:w-full ">
-                  <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
-                    {item.nome}| Nv. {item.nivel} | {item.raça} | {item.classe}{" "}
-                    | {item.alinhamento} | {item.experiencia}/
-                    {item.experienciaMeta}
-                  </span>
-                </div>
-                <div className="flex flex-col" >
-                  <img
-                    src={item.pic}
-                    className="border-1 border-red rounded-full m-1 w-[148px] h-[148px] self-center "
-                  />
-                  <div className="w-screen flex flex-row  justify-self-auto ">
-                    <div className="flex flex-col">
-                      <span className="text-xs  p-1  font-bold md:text-sm lg:text-base">
-                        Atributos
+          {sessionCharacters != undefined ? (
+            <>
+              {sessionCharacters.map((item: any, id: any) =>
+                id == 0 ? (
+                  <div
+                    key={id}
+                    className=" w-screen flex flex-col mt-2 m-1 rounded-t-md border-4 border-red-900 xl:w-2/5  "
+                  >
+                    <div className="bg-red-900 flex flex-row w-screen lg:w-full xl:w-full ">
+                      <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
+                        {item.nome}| Nv. {item.nivel} | {item.raça} |{" "}
+                        {item.classe} | {item.alinhamento} | {item.experiencia}/
+                        {item.experienciaMeta}
                       </span>
+                    </div>
+                    <div className="flex flex-col">
+                      <img
+                        src={item.pic}
+                        className="border-1 border-red rounded-full m-1 w-[148px] h-[148px] self-center "
+                      />
+                      <div className="w-screen flex flex-row  justify-self-auto ">
+                        <div className="flex flex-col">
+                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-base">
+                            Atributos
+                          </span>
 
-                      <div className="flex flex-row  items-center">
-                        <span className="text-xs p-1 md:text-sm lg:text-base">
-                          Força:{item.força}
-                          {"["}
-                          {getMod(item.força)}
-                          {"]"}
-                        </span>
-                        <button
-                          className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                          onClick={() =>
-                            attrTest("Força", item.força, item.nome)
-                          }
-                        >
-                          💪🏼
-                        </button>
+                          <div className="flex flex-row  items-center">
+                            <span className="text-xs p-1 md:text-sm lg:text-base">
+                              Força:{item.força}
+                              {"["}
+                              {getMod(item.força)}
+                              {"]"}
+                            </span>
+                            <button
+                              className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                              onClick={() =>
+                                attrTest("Força", item.força, item.nome)
+                              }
+                            >
+                              💪🏼
+                            </button>
+                          </div>
+                          <div className="flex flex-row  items-center">
+                            <span className="text-xs p-1 md:text-sm lg:text-base">
+                              Destreza:{item.destreza}
+                              {"["}
+                              {getMod(item.destreza)}
+                              {"]"}
+                            </span>
+                            <button
+                              className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                              onClick={() =>
+                                attrTest("Destreza", item.destreza, item.nome)
+                              }
+                            >
+                              🏹
+                            </button>
+                          </div>
+                          <div className="flex flex-row  items-center">
+                            <span className="text-xs p-1 md:text-sm lg:text-base">
+                              Constituição:{item.constituicao}
+                              {"["}
+                              {getMod(item.constituicao)}
+                              {"]"}
+                            </span>
+                            <button
+                              className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                              onClick={() =>
+                                attrTest(
+                                  "Constituição",
+                                  item.constituicao,
+                                  item.nome
+                                )
+                              }
+                            >
+                              🗿
+                            </button>
+                          </div>
+                          <div className="flex flex-row  items-center">
+                            <span className="text-xs p-1 md:text-sm lg:text-base">
+                              Inteligência:{item.inteligencia}
+                              {"["}
+                              {getMod(item.inteligencia)}
+                              {"]"}
+                            </span>
+                            <button
+                              className="py-3 px-4 m-2 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                              onClick={() =>
+                                attrTest(
+                                  "Inteligência",
+                                  item.inteligencia,
+                                  item.nome
+                                )
+                              }
+                            >
+                              🧠
+                            </button>
+                          </div>
+                          <div className="flex flex-row  items-center">
+                            <span className="text-xs p-1 md:text-sm lg:text-base">
+                              Sabedoria:{item.sabedoria}
+                              {"["}
+                              {getMod(item.sabedoria)}
+                              {"]"}
+                            </span>
+                            <button
+                              className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                              onClick={() =>
+                                attrTest("Sabedoria", item.sabedoria, item.nome)
+                              }
+                            >
+                              🦉
+                            </button>
+                          </div>
+                          <div className="flex flex-row  items-center">
+                            <span className="text-xs p-1 md:text-sm lg:text-base">
+                              Carisma:{item.carisma}
+                              {"["}
+                              {getMod(item.carisma)}
+                              {"]"}
+                            </span>
+                            <button
+                              className="py-3 px-4 m-2 bg-sky rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                              onClick={() =>
+                                attrTest("Carisma", item.carisma, item.nome)
+                              }
+                            >
+                              🗣️
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-row flex-wrap  ">
+                          <div className="flex flex-col flex-wrap ">
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              Est. de Combate
+                            </span>
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              (❤️)PV:DV({item.dv})+CON(
+                              {parseInt(item.constituicao) <= 8
+                                ? "-1"
+                                : parseInt(item.constituicao) <= 12
+                                ? "+0"
+                                : parseInt(item.constituicao) <= 14
+                                ? "+1"
+                                : parseInt(item.constituicao) <= 16
+                                ? "+2"
+                                : parseInt(item.constituicao) <= 18
+                                ? "+3"
+                                : "+4"}
+                              ):{item.pva}/{item.pv}
+                            </span>
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              (🛡️)CA({item.ca})+DES({getMod(item.destreza)})
+                            </span>
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              +ARMADURA({item.armadura})+ESCUDO({item.escudo})
+                            </span>
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              TOTAL(
+                              {parseInt(item.ca) +
+                                getMod(item.destreza) +
+                                parseInt(item.armadura) +
+                                parseInt(item.escudo)}
+                              )
+                            </span>
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              (⚔️)B.A: {item.ba}
+                            </span>
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              (🏹)B.A: {item.baD}
+                            </span>
+
+                            <div>
+                              <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                                JPD: {item.jpd}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  saveThorws(
+                                    "JPD",
+                                    item.destreza,
+                                    item.jpd,
+                                    item.nome
+                                  );
+                                }}
+                                className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                              >
+                                🛡️
+                              </button>
+                            </div>
+                            <div>
+                              <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                                JPC: {item.jpc}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  saveThorws(
+                                    "JPC",
+                                    item.constituicao,
+                                    item.jpc,
+                                    item.nome
+                                  );
+                                }}
+                                className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                              >
+                                🛡️
+                              </button>
+                            </div>
+                            <div>
+                              <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                                JPS: {item.jps}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  saveThorws(
+                                    "JPS",
+                                    item.sabedoria,
+                                    item.jps,
+                                    item.nome
+                                  );
+                                }}
+                                className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                              >
+                                🛡️
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex flex-row  items-center">
-                        <span className="text-xs p-1 md:text-sm lg:text-base">
-                          Destreza:{item.destreza}
-                          {"["}
-                          {getMod(item.destreza)}
-                          {"]"}
-                        </span>
+                      <div className="w-screen  h-60  flex flex-col items-center lg:w-full xl:w-full  ">
+                        <textarea
+                          defaultValue={item.notes}
+                          onChange={(e) => {
+                            setNotes(e.target.value);
+                            console.log(notes);
+                          }}
+                          className="bg-grey-700 w-screen h-full lg:w-full xl:w-full"
+                        />
                         <button
+                          onClick={() => {
+                            addNote(item.id, notes);
+                          }}
                           className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                          onClick={() =>
-                            attrTest("Destreza", item.destreza, item.nome)
-                          }
                         >
-                          🏹
-                        </button>
-                      </div>
-                      <div className="flex flex-row  items-center">
-                        <span className="text-xs p-1 md:text-sm lg:text-base">
-                          Constituição:{item.constituicao}
-                          {"["}
-                          {getMod(item.constituicao)}
-                          {"]"}
-                        </span>
-                        <button
-                          className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                          onClick={() =>
-                            attrTest(
-                              "Constituição",
-                              item.constituicao,
-                              item.nome
-                            )
-                          }
-                        >
-                          🗿
-                        </button>
-                      </div>
-                      <div className="flex flex-row  items-center">
-                        <span className="text-xs p-1 md:text-sm lg:text-base">
-                          Inteligência:{item.inteligencia}
-                          {"["}
-                          {getMod(item.inteligencia)}
-                          {"]"}
-                        </span>
-                        <button
-                          className="py-3 px-4 m-2 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                          onClick={() =>
-                            attrTest(
-                              "Inteligência",
-                              item.inteligencia,
-                              item.nome
-                            )
-                          }
-                        >
-                          🧠
-                        </button>
-                      </div>
-                      <div className="flex flex-row  items-center">
-                        <span className="text-xs p-1 md:text-sm lg:text-base">
-                          Sabedoria:{item.sabedoria}
-                          {"["}
-                          {getMod(item.sabedoria)}
-                          {"]"}
-                        </span>
-                        <button
-                          className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                          onClick={() =>
-                            attrTest("Sabedoria", item.sabedoria, item.nome)
-                          }
-                        >
-                          🦉
-                        </button>
-                      </div>
-                      <div className="flex flex-row  items-center">
-                        <span className="text-xs p-1 md:text-sm lg:text-base">
-                          Carisma:{item.carisma}
-                          {"["}
-                          {getMod(item.carisma)}
-                          {"]"}
-                        </span>
-                        <button
-                          className="py-3 px-4 m-2 bg-sky rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                          onClick={() =>
-                            attrTest("Carisma", item.carisma, item.nome)
-                          }
-                        >
-                          🗣️
+                          Salvar
                         </button>
                       </div>
                     </div>
-
-                    <div className="flex flex-row flex-wrap  ">
-                      <div className="flex flex-col flex-wrap ">
-                        <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                          Est. de Combate
-                        </span>
-                        <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                          (❤️)PV:DV({item.dv})+CON(
-                          {parseInt(item.constituicao) <= 8
-                            ? "-1"
-                            : parseInt(item.constituicao) <= 12
-                            ? "+0"
-                            : parseInt(item.constituicao) <= 14
-                            ? "+1"
-                            : parseInt(item.constituicao) <= 16
-                            ? "+2"
-                            : parseInt(item.constituicao) <= 18
-                            ? "+3"
-                            : "+4"}
-                          ):{item.pva}/{item.pv}
-                        </span>
-                        <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                          (🛡️)CA({item.ca})+DES({getMod(item.destreza)})
-                        </span>
-                        <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                          +ARMADURA({item.armadura})+ESCUDO({item.escudo})
-                        </span>
-                        <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                          TOTAL(
-                          {parseInt(item.ca) +
-                            getMod(item.destreza) +
-                            parseInt(item.armadura) +
-                            parseInt(item.escudo)}
-                          )
-                        </span>
-                        <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                          (⚔️)B.A: {item.ba}
-                        </span>
-                        <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                          (🏹)B.A: {item.baD}
-                        </span>
-
-                        <div>
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            JPD: {item.jpd}
-                          </span>
-                          <button
-                            onClick={() => {
-                              saveThorws(
-                                "JPD",
-                                item.destreza,
-                                item.jpd,
-                                item.nome
-                              );
-                            }}
-                            className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                          >
-                            🛡️
-                          </button>
-                        </div>
-                        <div>
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            JPC: {item.jpc}
-                          </span>
-                          <button
-                            onClick={() => {
-                              saveThorws(
-                                "JPC",
-                                item.constituicao,
-                                item.jpc,
-                                item.nome
-                              );
-                            }}
-                            className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                          >
-                            🛡️
-                          </button>
-                        </div>
-                        <div>
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            JPS: {item.jps}
-                          </span>
-                          <button
-                            onClick={() => {
-                              saveThorws(
-                                "JPS",
-                                item.sabedoria,
-                                item.jps,
-                                item.nome
-                              );
-                            }}
-                            className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                          >
-                            🛡️
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-screen  h-60  flex flex-col items-center lg:w-full xl:w-full  ">
-                    <textarea
-                      defaultValue={item.notes}
-                      onChange={(e) => {
-                        setNotes(e.target.value);
-                        console.log(notes);
-                      }}
-                      className="bg-grey-700 w-screen h-full lg:w-full xl:w-full"
-                    />
                     <button
                       onClick={() => {
-                        addNote(item.id, notes);
+                        if (showEdit) {
+                          setShowEdit(false);
+                        } else {
+                          setShowEdit(true);
+                        }
                       }}
-                      className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                      className="py-3 px-4 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                     >
-                      Salvar
+                      Editar
                     </button>
+                    {showEdit ? (
+                      <EditCharacter
+                        usuario={localStorage.getItem("@login")}
+                        item={item}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </div>
-                </div>
-                <button
-                  onClick={() => {
-                    if (showEdit) {
-                      setShowEdit(false);
-                    } else {
-                      setShowEdit(true);
-                    }
-                  }}
-                  className="py-3 px-4 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                >
-                  Editar
-                </button>
-                {showEdit ? (
-                  <EditCharacter
-                    usuario={localStorage.getItem("@login")}
-                    item={item}
-                  />
                 ) : (
                   <></>
-                )}
-              </div>
-            ) : (
-              <></>
-            )
+                )
+              )}
+            </>
+          ) : (
+            <></>
           )}
         </div>
         <button

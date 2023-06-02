@@ -246,7 +246,7 @@ export const NewCharacter = ({ usuario}) => {
                   <input
                     className="bg-grey-700 w-8 px-1 "
                     type="number"
-                    value={10}
+                    defaultValue={10}
                     onChange={(e) => setCa(e.target.value)}
                   />
                   +

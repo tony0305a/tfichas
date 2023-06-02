@@ -1,23 +1,23 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NewBestiaryEntry } from "./newBestiaryEntry";
 import { BestiaryCard } from "./bestiaryCard";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "../../firestore";
+import { EtcContext, useEtc } from "../../contexts/etcProvider";
 
 export const Bestiary = () => {
   const [show, setShow] = useState<boolean>(false);
-  const [bestiary, setBestiary] = useState<any>([]);
+
+  const {bestiary, bestiaryUnsub} = useEtc()
 
   useEffect(() => {
-    const q = query(collection(db, "PdMs"));
-    const unsub = onSnapshot(q, (querySnapShot) => {
-      setBestiary([]);
-      querySnapShot.forEach((item) => {
-        setBestiary((prev) => [...prev, item.data()]);
-      });
-    });
-    return () => unsub();
+
+    return () => bestiaryUnsub();
   }, []);
+
+  if(bestiary==undefined){
+    return <h1>loading</h1>
+  }
 
   return (
     <div className="flex flex-col w-screen border-4 border-red-900 ">
