@@ -1,9 +1,11 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
+  limit,
   onSnapshot,
   orderBy,
   query,
@@ -50,6 +52,11 @@ type Etc = {
   heal: (healer: any, healed: any, amount: any) => any;
   checkHit: (roll: any, ca: any) => any;
   healRoll: (healer: any, healAmount: any, healDices: any, healMod: any) => any;
+  nextTurn: () => any;
+  syncronizeTurn: () => any;
+  nextRound: () => any;
+  rodada: any;
+  setRodada: any;
 };
 
 export const EtcContext = createContext<Etc | null>(null);
@@ -60,7 +67,17 @@ export const EtcProvider = ({ children }) => {
   const [bestiary, setBestiary] = useState<any>([]);
   const [battlePart, setBattlePart] = useState<any>([]);
   const [targets, setTargets] = useState<any>([]);
-  const [turno, setTurno] = useState<any>([]);
+  const [turno, setTurno] = useState<any>(0);
+  const [rodada, setRodada] = useState<any>(0);
+
+  var originalDb = true;
+
+  var turnCode = "";
+  if (originalDb) {
+    turnCode = "lddm17IafCgfNx998Uig";
+  } else {
+    turnCode = "EeQ7ayNeRaewAn4oXdgF";
+  }
 
   //FUNÇÕES
   const roll = (diceBoard: any) => {
@@ -120,7 +137,11 @@ export const EtcProvider = ({ children }) => {
     }
   };
   const unsubRolls = async () => {
-    const q = query(collection(db, "rolagens"), orderBy("createdAt", "desc"));
+    const q = query(
+      collection(db, "rolagens"),
+      orderBy("createdAt", "desc"),
+      limit(10)
+    );
     onSnapshot(q, (querySnapshot: any) => {
       setRolls([{}]);
       querySnapshot.forEach((doc: any) => {
@@ -175,11 +196,10 @@ export const EtcProvider = ({ children }) => {
   };
 
   const turnUnsub = async () => {
-    const q = query(collection(db, "turn"));
-    const unsub = onSnapshot(q, (qSnap) => {
-      qSnap.forEach((doc) => {
-        setTurno(doc.data().turno);
-      });
+    const q = await getDoc(doc(db, "turn", turnCode));
+    onSnapshot(collection(db, "turn"), (snap) => {
+      setTurno(snap.docs[0].data().turno);
+      setRodada(snap.docs[0].data().rodada);
     });
   };
 
@@ -446,6 +466,35 @@ export const EtcProvider = ({ children }) => {
     );
   };
 
+  //EeQ7ayNeRaewAn4oXdgF
+  //lddm17IafCgfNx998Uig
+  const nextTurn = async () => {
+    var d = await getDoc(doc(db, "turn", turnCode));
+    var nt = parseInt(d.data().turno);
+    var newT = nt + 1;
+    setTurno(newT);
+    updateDoc(d.ref, { turno: newT });
+    var q = query(collection(db, "targets"));
+    var df = await getDocs(q);
+    df.forEach((i) => {
+      deleteDoc(i.ref);
+    });
+  };
+  const nextRound = async () => {
+    var d = await getDoc(doc(db, "turn", turnCode));
+    var nt = parseInt(d.data().rodada);
+    var nR = nt + 1;
+    setTurno(0);
+    updateDoc(d.ref, { turno: 0, rodada: nR });
+    var q = query(collection(db, "targets"));
+    var df = await getDocs(q);
+    df.forEach((i) => {
+      deleteDoc(i.ref);
+    });
+  };
+
+  const syncronizeTurn = async () => {};
+
   const contextValue = {
     roll: useCallback((dice: any) => roll(dice), []),
     getTime: useCallback(() => getTime(), []),
@@ -502,6 +551,11 @@ export const EtcProvider = ({ children }) => {
         healRoll(healer, healAmount, healDice, healMod),
       []
     ),
+    nextTurn: useCallback(() => nextTurn(), []),
+    syncronizeTurn: useCallback(() => syncronizeTurn(), []),
+    nextRound: useCallback(() => nextRound(), []),
+    setRodada,
+    rodada,
   };
 
   return (
@@ -532,6 +586,11 @@ export const useEtc = () => {
     meleeAttack,
     rangedAttack,
     healRoll,
+    nextTurn,
+    syncronizeTurn,
+    nextRound,
+    setRodada,
+    rodada,
   } = useContext(EtcContext);
   return {
     roll,
@@ -555,5 +614,10 @@ export const useEtc = () => {
     meleeAttack,
     rangedAttack,
     healRoll,
+    nextTurn,
+    syncronizeTurn,
+    nextRound,
+    setRodada,
+    rodada,
   };
 };

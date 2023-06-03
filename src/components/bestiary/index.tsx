@@ -8,20 +8,19 @@ import { EtcContext, useEtc } from "../../contexts/etcProvider";
 export const Bestiary = () => {
   const [show, setShow] = useState<boolean>(false);
 
-  const {bestiary, bestiaryUnsub} = useEtc()
+  const { bestiary, bestiaryUnsub } = useEtc();
 
   useEffect(() => {
-
     return () => bestiaryUnsub();
   }, []);
 
-  if(bestiary==undefined){
-    return <h1>loading</h1>
+  if (bestiary == undefined) {
+    return <h1>loading</h1>;
   }
 
   return (
     <div className="flex flex-col w-screen border-4 border-red-900 ">
-      <div className="bg-red-900 p-2  rounded-t-md">
+      <div className="bg-red-900 rounded-t-md">
         <span className="text-xs  p-2  font-bold md:text-sm lg:text-base">
           Bestiário
         </span>

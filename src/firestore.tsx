@@ -12,7 +12,7 @@ import { getFirestore } from "firebase/firestore";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-const firebaseConfig1 = {
+const firebaseConfig = {
     apiKey: "AIzaSyCLYRXKvwTB9xyAMClg04luQsL8vyaj6VI",
     authDomain: "tfichas-a6672.firebaseapp.com",
     projectId: "tfichas-a6672",
@@ -21,7 +21,7 @@ const firebaseConfig1 = {
     appId: "1:150529796747:web:c4db0ee94d1147c485428e"
 
   };
-  const firebaseConfig = {
+  const firebaseConfig1 = {
 
     apiKey: "AIzaSyA4-0eJeXOjf8jUcjbT0oIEjBylfdHrtJA",
   

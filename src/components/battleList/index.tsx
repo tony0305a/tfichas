@@ -16,6 +16,8 @@ import { BattleListCard } from "./battleListCard";
 import vs from "../../svgs/vs.png";
 import { useEtc } from "../../contexts/etcProvider";
 import { AuthContext } from "../../contexts/authProvider";
+import { PlayerActionBar } from "../actionBars/player";
+import { MasterActionBar } from "../actionBars/master";
 
 export const BattleList = ({ role }) => {
   const [show, setShow] = useState<any>(false);
@@ -32,9 +34,8 @@ export const BattleList = ({ role }) => {
     targets,
     rollDx,
     logRoll,
-    meleeAttack,
-    rangedAttack,
-    healRoll,
+    setRodada,
+    rodada
   } = useEtc();
   const { sessionCharacters, auth } = useContext(AuthContext);
   const [char, setChar] = useState<any>([]);
@@ -75,49 +76,6 @@ export const BattleList = ({ role }) => {
     );
   };
 
-  /*
-  const joinBattle = async () => {
-    const q = query(
-      collection(db, "characters"),
-      where("belongsTo", "==", localStorage.getItem("@login"))
-    );
-    const stateQuery = await getDocs(q);
-    const character = stateQuery.docs[0].data();
-    setChar(stateQuery.docs[0].data());
-    const df = await addDoc(collection(db, "battle"), {
-      nome: character.nome,
-      id: 0,
-      pva: character.pva,
-      pv: character.pv,
-      ca: character.ca,
-      armadura: character.armadura,
-      escudo: character.escudo,
-      destreza: character.destreza,
-      ba: character.ba,
-      baD: character.baD,
-      iniciativa:
-        Math.floor(Math.random() * 20) + 1 + getMod(character.destreza),
-      pic: character.pic,
-      belongsTo: character.belongsTo,
-      meleeWeapon: character.meleeWeapon,
-      meleeWeaponQnt: character.meleeWeaponQnt,
-      rangedWeapon: character.rangedWeapon,
-      rangedWeaponQnt: character.rangedWeaponQnt,
-      partId: character.id,
-    });
-    updateDoc(doc(db, "battle", df.id), { id: df.id });
-  };
-  */
-
-  /*
-                  const q = collection(db,'targets')
-                const st = onSnapshot(q,(qt)=>{
-                  qt.forEach((item)=>{
-                    deleteDoc(doc(db,'targets',item.id))
-                  })
-                })
-  */
-
   const getTurn = (bp) => {
     if (bp[turno] !== undefined) {
       return bp[turno];
@@ -126,20 +84,9 @@ export const BattleList = ({ role }) => {
     }
   };
 
-  const nextTurn = async () => {
-    const d = await getDoc(doc(db, "turn", "lddm17IafCgfNx998Uig"));
-    const nt = d.data().turno + 1;
-    updateDoc(d.ref, { turno: nt });
-    onSnapshot(collection(db, "turn"), (state) => {
-      if (state.docs[0].data().turno > battlePart.length - 1) {
-        updateDoc(d.ref, { turno: 0 });
-      }
-    });
-  };
-
   const battleStart = async () => {
-    const d = await getDoc(doc(db, "turn", "lddm17IafCgfNx998Uig"));
-    updateDoc(d.ref, { turno: 0 });
+    const q = await getDocs(collection(db, "turn"));
+    updateDoc(q.docs[0].ref, { rodada: 0 });
   };
 
   if (sessionCharacters == undefined) {
@@ -158,17 +105,11 @@ export const BattleList = ({ role }) => {
           Batalha
         </span>
       </div>
-      <div className="flex flex-col">
-        <button
-          onClick={() => {
-            getTurn(battlePart);
-          }}
-        >
-          Turno
-        </button>
-        <span>{getTurn(battlePart).nome}</span>
+      <div className="flex flex-col" >
+         <span>Rodada:{rodada}</span> 
+         <span>Turno:{turno}</span> 
       </div>
-      <div className="flex flex-col flex-wrap items-center ">
+      <div className="flex flex-col flex-wrap items-center bg-grey-900 ">
         <span>Combate</span>
         {targets.map((item, index) => (
           <div key={index} className="flex flex-row gap-2 ">
@@ -212,178 +153,28 @@ export const BattleList = ({ role }) => {
             />
           ))}
       </div>
-      <div className="flex flex-col items-center justify-center ">
-        <div className="flex flex-row mt-4 gap-3 ">
-          <div className="flex flex-col">
-            <button
-              className="px-4 py-1 bg-red rounded"
-              onClick={() => {
-                meleeAttack(
-                  char.nome,
-                  "Faceless",
-                  localStorage.getItem("meleeW"),
-                  localStorage.getItem("meleeWQnt"),
-                  localStorage.getItem("meleeWHit"),
-                  localStorage.getItem("meleeWDmg")
-                );
-              }}
-            >
-              ⚔️
-            </button>
-            <div className="flex flex-row">
-              <span>Acerto: </span>
-              <span className="mx-1">+</span>
-              <input
-                defaultValue={localStorage.getItem("meleeWHit")}
-                onChange={(e) =>
-                  localStorage.setItem("meleeWHit", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
+
+      {role == 0 ? (
+        <MasterActionBar turn={getTurn(battlePart)} />
+      ) : (
+        <>
+          {active ? (
+            <PlayerActionBar char={char} />
+          ) : (
+            <div className="flex flex-col items-center justify-center ">
+              <button
+                onClick={() => {
+                  joinBattle();
+                  setActive(true);
+                }}
+                className="py-3 px-4 m-2 bg-green-500 rounded w-screen font-semibold text-white text-sm transition-colors"
+              >
+                Entrar na batalha
+              </button>
             </div>
-            <div className="flex flex-row">
-              <span>Dano:</span>
-              <input
-                defaultValue={localStorage.getItem("meleeWQnt")}
-                onChange={(e) =>
-                  localStorage.setItem("meleeWQnt", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-              <span className="mx-1">d</span>
-              <input
-                defaultValue={localStorage.getItem("meleeW")}
-                onChange={(e) => localStorage.setItem("meleeW", e.target.value)}
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-              <span>+</span>
-              <input
-                defaultValue={localStorage.getItem("meleeWDmg")}
-                onChange={(e) =>
-                  localStorage.setItem("meleeWDmg", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <button
-              className="px-4 py-1 bg-green-500 rounded"
-              onClick={() => {
-                rangedAttack(
-                  char.nome,
-                  "Faceless",
-                  localStorage.getItem("rangedW"),
-                  localStorage.getItem("rangedWQnt"),
-                  localStorage.getItem("rangedWHit"),
-                  localStorage.getItem("rangedWDmg")
-                );
-              }}
-            >
-              🏹
-            </button>
-            <div className="flex flex-row">
-              <span>Acerto: </span>
-              <span className="mx-1">+</span>
-              <input
-                defaultValue={localStorage.getItem("rangedWHit")}
-                onChange={(e) =>
-                  localStorage.setItem("rangedWHit", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-            </div>
-            <div className="flex flex-row">
-              <span>Dano:</span>
-              <input
-                defaultValue={localStorage.getItem("rangedWQnt")}
-                onChange={(e) =>
-                  localStorage.setItem("rangedWQnt", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-              <span className="mx-1">d</span>
-              <input
-                defaultValue={localStorage.getItem("rangedW")}
-                onChange={(e) =>
-                  localStorage.setItem("rangedW", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-              <span>+</span>
-              <input
-                defaultValue={localStorage.getItem("rangedWDmg")}
-                onChange={(e) =>
-                  localStorage.setItem("rangedWDmg", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <button
-              className="px-4 py-1 bg-white rounded"
-              onClick={() => {
-                healRoll(
-                  char.nome,
-                  localStorage.getItem("healAmount"),
-                  localStorage.getItem("healDices"),
-                  localStorage.getItem("healMod")
-                );
-              }}
-            >
-              ❇️
-            </button>
-            <div className="flex flex-row">
-              <span>Cura: </span>
-              <input
-                defaultValue={localStorage.getItem("healDices")}
-                onChange={(e) =>
-                  localStorage.setItem("healDices", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-              <span className="mx-1">d</span>
-              <input
-                defaultValue={localStorage.getItem("healAmount")}
-                onChange={(e) =>
-                  localStorage.setItem("healAmount", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-              <span>+</span>
-              <input
-                defaultValue={localStorage.getItem("healMod")}
-                onChange={(e) =>
-                  localStorage.setItem("healMod", e.target.value)
-                }
-                className="w-6 bg-grey-800 text-center "
-                type="text"
-              />
-            </div>
-          </div>
-        </div>
-        <button
-          onClick={() => {
-            joinBattle();
-            setActive(true);
-          }}
-          className="py-3 px-4 m-2 bg-green-500 rounded w-screen font-semibold text-white text-sm transition-colors"
-          disabled={active}
-        >
-          Entrar na batalha
-        </button>
-      </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

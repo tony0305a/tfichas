@@ -48,14 +48,7 @@ export const Home = () => {
   const [notes, setNotes] = useState<any>("");
   const navigate = useNavigate();
 
-  const {
-    roll,
-    getMod,
-    unsubRolls,
-    rolls,
-    rollDx,
-    logRoll,
-  } = useEtc();
+  const { roll, getMod, unsubRolls, rolls, rollDx, logRoll } = useEtc();
   const { auth, sessionName, sessionCharacters, sessionRole } =
     useContext(AuthContext);
 
@@ -67,7 +60,7 @@ export const Home = () => {
     }
     return () => {
       unsubRolls();
-      auth()
+      auth();
     };
   }, []);
 
@@ -229,10 +222,17 @@ export const Home = () => {
           )}
         </div>
       </header>
-      <BattleList role={sessionRole} />
-      <div className="bg-grey-900 mt-3 flex items-center justify-center">
-        <Bestiary />
+      <div className="bg-grey-900 flex items-center justify-center">
+        <BattleList role={sessionRole} />
       </div>
+      {sessionRole == 0 ? (
+        <div className="bg-grey-900 flex items-center justify-center">
+          <Bestiary />
+        </div>
+      ) : (
+        <></>
+      )}
+
       <div className="w-screen flex flex-col border-4 border-red-900 bg-grey-800 ">
         <div className="bg-red-900 p-2 rounded-t-md w-screen ">
           <span className="text-xs  p-2  font-bold md:text-sm lg:text-base">
