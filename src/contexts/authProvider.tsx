@@ -38,18 +38,8 @@ export const AuthProvider = ({ children }) => {
       setSessionName(stateQuery.docs[0].data().name);
       setSessionLogin(stateQuery.docs[0].data().login);
       setSessionRole(stateQuery.docs[0].data().role);
-      const charFindQ = query(
-        collection(db, "characters"),
-        where("belongsTo", "==", localStorage.getItem("@login"))
-      );
-      try {
-        const charFind = await getDocs(charFindQ);
-        setSessionCharacters([charFind.docs[0].data()]);
-      } catch (e) {
-        setSessionCharacters([{}]);
-      }
     } catch (e) {
-      throw e;
+      console.log(e);
     }
   };
 

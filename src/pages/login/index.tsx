@@ -76,7 +76,7 @@ export const Login = () =>{
         <Text size='sm' className='text-grey-200' >Lembrar de mim por 30 dias</Text>
       </label>
 
-      <Buttom className='mt-4' type='reset' onClick={()=>handleLogin(userName,userPass)} >Entrar na plataforma</Buttom>
+      <Buttom className='mt-4' type='reset' onClick={()=>{handleLogin(userName,userPass)}} >Entrar na plataforma</Buttom>
     </form>
 
 

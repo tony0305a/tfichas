@@ -70,7 +70,6 @@ export const Home = () => {
     }
     return () => {
       unsubRolls();
-      auth();
       charactersUnsub();
     };
   }, []);
