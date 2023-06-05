@@ -38,7 +38,6 @@ export const BattleList = ({ role }) => {
     characters,
     charactersUnsub,
   } = useEtc();
-  const { sessionCharacters, auth } = useContext(AuthContext);
   const [char, setChar] = useState<any>([]);
   const [meleeW, setMeleeW] = useState<any>(0);
   const [meleeWQnt, setMeleeWQnt] = useState<any>(0);
@@ -56,17 +55,17 @@ export const BattleList = ({ role }) => {
   }, []);
 
   useEffect(() => {
-    if (sessionCharacters != undefined) {
-      setChar(sessionCharacters[0]);
-      setMeleeW(sessionCharacters[0].meleeWeapon);
-      setMeleeWQnt(sessionCharacters[0].meleeWeaponQnt);
+    if (characters != undefined) {
+      setChar(characters[0]);
+      setMeleeW(characters[0].meleeWeapon);
+      setMeleeWQnt(characters[0].meleeWeaponQnt);
     }
-  }, [sessionCharacters]);
+  }, [characters]);
 
   const joinBattle = async () => {
     const dRoll = rollDx(20);
     const initRoll = dRoll + getMod(char.destreza);
-    const df = await addDoc(collection(db, "battle"), sessionCharacters[0]);
+    const df = await addDoc(collection(db, "battle"), characters[0]);
     updateDoc(doc(db, "battle", df.id), {
       battleId: df.id,
       iniciativa: initRoll,
@@ -91,7 +90,7 @@ export const BattleList = ({ role }) => {
     updateDoc(q.docs[0].ref, { rodada: 0 });
   };
 
-  if (sessionCharacters == undefined) {
+  if (characters == undefined) {
     return <h1>Loading </h1>;
   }
 
@@ -113,7 +112,7 @@ export const BattleList = ({ role }) => {
       </div>
       <div className="flex flex-col flex-wrap items-center bg-grey-900 ">
         <span>Combate</span>
-        {targets.map((item:any, index:any) => (
+        {targets.map((item: any, index: any) => (
           <div key={index} className="flex flex-row gap-2 ">
             <div className="flex flex-row">
               <div className="flex flex-col items-center">
@@ -145,8 +144,8 @@ export const BattleList = ({ role }) => {
       </div>
       <div className="flex flex-row flex-wrap bg-grey-900 gap-2 ">
         {battlePart
-          .sort((a:any, b:any) => b.iniciativa > a.iniciativa)
-          .map((item:any, index:any) => (
+          .sort((a: any, b: any) => b.iniciativa > a.iniciativa)
+          .map((item: any, index: any) => (
             <BattleListCard
               key={index}
               role={role}
