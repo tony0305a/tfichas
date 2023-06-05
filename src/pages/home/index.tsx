@@ -243,10 +243,10 @@ export const Home = () => {
         <div className="flex flex-row flex-wrap">
           {characters != undefined ? (
             <>
-              {characters.map((item: any, id: any) =>
-                id == 0 ? (
+              {characters.map((item: any, index: any) =>
+                index == 0 || index > 0 ? (
                   <div
-                    key={id}
+                    key={index}
                     className=" w-screen flex flex-col mt-2 m-1 rounded-t-md border-4 border-red-900 xl:w-2/5  "
                   >
                     <div className="bg-red-900 flex flex-row w-screen lg:w-full xl:w-full ">
