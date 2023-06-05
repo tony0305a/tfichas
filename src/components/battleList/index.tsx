@@ -113,7 +113,7 @@ export const BattleList = ({ role }) => {
       </div>
       <div className="flex flex-col flex-wrap items-center bg-grey-900 ">
         <span>Combate</span>
-        {targets.map((item, index) => (
+        {targets.map((item:any, index:any) => (
           <div key={index} className="flex flex-row gap-2 ">
             <div className="flex flex-row">
               <div className="flex flex-col items-center">
@@ -145,8 +145,8 @@ export const BattleList = ({ role }) => {
       </div>
       <div className="flex flex-row flex-wrap bg-grey-900 gap-2 ">
         {battlePart
-          .sort((a, b) => b.iniciativa > a.iniciativa)
-          .map((item, index) => (
+          .sort((a:any, b:any) => b.iniciativa > a.iniciativa)
+          .map((item:any, index:any) => (
             <BattleListCard
               key={index}
               role={role}

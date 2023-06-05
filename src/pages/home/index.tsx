@@ -181,13 +181,13 @@ export const Home = () => {
 
         <div className="flex flex-col items-center w-screen">
           <div className=" bg-grey-700 flex flex-row flex-wrap items-center justify-center w-6/12  h-50 rounded ">
-            {diceBoard.map((item: any, id: any) => (
+            {diceBoard.map((item: any, index: any) => (
               <img
-                key={id}
+                key={index}
                 className="w-8 md:w-16 lg:w-22"
                 src={item.dice}
                 alt={item.dice}
-                onClick={() => removeFromBoard(id)}
+                onClick={() => removeFromBoard(index)}
               />
             ))}
           </div>
@@ -211,12 +211,12 @@ export const Home = () => {
         </div>
 
         <div className="  bg-grey-900 flex flex-col items-start w-screen  h-48 overflow-y-auto scroll-auto mt-8 p-4 rounded md:w-2/5 xl:w-2/5 ">
-          {rolls.map((item: any, id: any) =>
-            id >= 1 ? (
+          {rolls.map((item: any, index: any) =>
+            index >= 1 ? (
               <span
-                key={id}
+                key={index}
                 className={
-                  id != 1
+                  index != 1
                     ? "text-xs md:text-sm lg:text-base"
                     : "text-xs md:text-sm lg:text-base font-bold animate-bounce"
                 }
