@@ -8,15 +8,10 @@ import { Buttom } from "../../components/Buttom";
 import { useContext, useEffect, useRef, useState } from "react";
 import { db } from "../../firestore";
 import {
-  addDoc,
   collection,
   doc,
   getDocs,
-  limit,
-  onSnapshot,
-  orderBy,
   query,
-  serverTimestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -52,7 +47,7 @@ export const Home = () => {
   const [session, setSession] = useState<any>();
   const [sRole, setSRole] = useState<any>(0);
   const { roll, getMod, unsubRolls, rolls, rollDx, logRoll } = useEtc();
-  const { auth, sessionName, sessionRole } = useContext(AuthContext);
+  const { auth, sessionRole } = useContext(AuthContext);
 
   useEffect(() => {
     const auth = async () => {
@@ -61,7 +56,7 @@ export const Home = () => {
         where("id", "==", localStorage.getItem("uid"))
       );
       const aut = await getDocs(collection(db, "users"));
-      sessionName(aut.docs[0].data().name);
+      session(aut.docs[0].data().name);
       setSRole(aut.docs[0].data().role);
     };
 
@@ -100,7 +95,7 @@ export const Home = () => {
     } else {
       text = `[${name}] Mod. mod ${getMod(attr)} não passa no teste de ${type}`;
     }
-    logRoll(sessionName, diceRoll, text);
+    logRoll(session, diceRoll, text);
   };
 
   const saveThorws = (
@@ -116,7 +111,7 @@ export const Home = () => {
     } else {
       text = ` [${name}] não passou na ${type}`;
     }
-    logRoll(sessionName, diceRoll, text);
+    logRoll(session, diceRoll, text);
   };
 
   const addNote = (id: any, notes: any) => {
