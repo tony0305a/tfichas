@@ -15,11 +15,15 @@ import { db } from "../../firestore";
 import { useContext, useEffect, useState } from "react";
 import { HealthBar } from "../HealthBar";
 import { useEtc } from "../../contexts/etcProvider";
-import plus from "../../svgs/plus.png"
-import minus from "../../svgs/minus.png"
+import plus from "../../svgs/plus.png";
+import minus from "../../svgs/minus.png";
+import { useCharacters } from "../../contexts/charactersProvider";
+import { useBattle } from "../../contexts/battleProvider";
 
 export const BattleListCard = ({ role, item, turn }) => {
-  const { getMod, characters, pvaControl } = useEtc();
+  const { getMod } = useEtc();
+  const { pvaControl } = useBattle();
+  const { characters } = useCharacters();
 
   const targetList = async (item: any, character: any) => {
     const df = await addDoc(collection(db, "targets"), {
@@ -126,12 +130,20 @@ export const BattleListCard = ({ role, item, turn }) => {
           <></>
         )}
         {role == 0 ? (
-          <div className="flex flex-row items-center " >
-            <img src={minus} onClick={()=>pvaControl(item.battleId,-1)} className="w-6 cursor-pointer" />
+          <div className="flex flex-row items-center ">
+            <img
+              src={minus}
+              onClick={() => pvaControl(item.battleId, -1)}
+              className="w-6 cursor-pointer"
+            />
             <span>
               {item.pva}/{item.pv}
             </span>
-            <img src={plus} onClick={()=>pvaControl(item.battleId,1)} className="w-6 cursor-pointer" />
+            <img
+              src={plus}
+              onClick={() => pvaControl(item.battleId, 1)}
+              className="w-6 cursor-pointer"
+            />
           </div>
         ) : (
           <></>

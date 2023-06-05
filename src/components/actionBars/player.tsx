@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { useEtc } from "../../contexts/etcProvider";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "../../firestore";
+import { useBattle } from "../../contexts/battleProvider";
+import { useTurn } from "../../contexts/turnProvider";
+import { useCharacters } from "../../contexts/charactersProvider";
 
-export const PlayerActionBar = ({ char }) => {
-  const { meleeAttack, rangedAttack, healRoll, nextTurn, battlePart, turno } =
-    useEtc();
+export const PlayerActionBar = () => {
+  const { meleeAttack, rangedAttack, healRoll, battlePart } = useBattle();
+  const { nextTurn } = useTurn();
+  const { characters } = useCharacters();
   const [turnOf, setTurnOf] = useState<any>([]);
 
   useEffect(() => {
@@ -13,30 +17,22 @@ export const PlayerActionBar = ({ char }) => {
     const unsub = onSnapshot(q, (state) => {
       var t = battlePart[state.docs[0].data().turno];
       setTurnOf(t);
-
       return () => unsub();
     });
-  }, []);
+  });
 
-  return (
+  return ( 
     <>
       {turnOf != undefined ? (
         <>
-          {turnOf.nome == char.nome ? (
+          {turnOf.nome == characters[0].nome ? (
             <div className="flex flex-row mt-4 gap-3 ">
-              <button
-                onClick={() => {
-                  console.log(turnOf);
-                }}
-              >
-                test
-              </button>
               <div className="flex flex-col">
                 <button
                   className="px-4 py-1 bg-stone rounded"
                   onClick={() => {
                     meleeAttack(
-                      char.nome,
+                      characters[0].nome,
                       "Faceless",
                       localStorage.getItem("PlayerCustom"),
                       localStorage.getItem("PlayerCustomQnt"),
@@ -95,7 +91,7 @@ export const PlayerActionBar = ({ char }) => {
                   className="px-4 py-1 bg-red rounded"
                   onClick={() => {
                     meleeAttack(
-                      char.nome,
+                      characters[0].nome,
                       "Faceless",
                       localStorage.getItem("meleeW"),
                       localStorage.getItem("meleeWQnt"),
@@ -153,7 +149,7 @@ export const PlayerActionBar = ({ char }) => {
                   className="px-4 py-1 bg-green-500 rounded"
                   onClick={() => {
                     rangedAttack(
-                      char.nome,
+                      characters[0].nome,
                       "Faceless",
                       localStorage.getItem("rangedW"),
                       localStorage.getItem("rangedWQnt"),
@@ -211,7 +207,7 @@ export const PlayerActionBar = ({ char }) => {
                   className="px-4 py-1 bg-white rounded"
                   onClick={() => {
                     healRoll(
-                      char.nome,
+                      characters[0].nome,
                       localStorage.getItem("healAmount"),
                       localStorage.getItem("healDices"),
                       localStorage.getItem("healMod")
@@ -225,7 +221,7 @@ export const PlayerActionBar = ({ char }) => {
                   <input
                     defaultValue={localStorage.getItem("healDices")}
                     onChange={(e) =>
-                      localStorage.setItem("healDices", e.target.value)
+                      localStorage.setItem("healDices", e.target.value) 
                     }
                     className="w-6 bg-grey-800 text-center "
                     type="text"

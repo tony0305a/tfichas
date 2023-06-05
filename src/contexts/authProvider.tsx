@@ -10,6 +10,7 @@ import {
 import { createContext, useCallback, useContext, useState } from "react";
 import { db } from "../firestore";
 import { useNavigate } from "react-router";
+import { BestiaryContext } from "./bestiartProvider";
 
 type Auth = {
   auth: () => any;

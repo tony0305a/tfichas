@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
 import { useEtc } from "../../contexts/etcProvider";
+import { useBattle } from "../../contexts/battleProvider";
+import { useTurn } from "../../contexts/turnProvider";
 
 export const MasterActionBar = ({ turn }) => {
-  const [tt, setTT] = useState<any>([]);
-  const {
-    meleeAttack,
-    rangedAttack,
-    healRoll,
-    nextTurn,
-    battleUnsub,
-    nextRound
-  } = useEtc();
+  const { meleeAttack, rangedAttack, healRoll, battleUnsub } = useBattle();
+  const { nextTurn, nextRound } = useTurn();
 
   const [meleeWeapon, setMeleeWeapon] = useState<any>(turn.meleeWeapon);
   const [meleeWeaponDmg, setMeleeWeaponDmg] = useState<any>(0);
@@ -48,8 +43,6 @@ export const MasterActionBar = ({ turn }) => {
     localStorage.setItem("PdMCustomBa", "0");
     localStorage.setItem("PdMCustomDmg", "0");
   }
-  const [ba, setBa] = useState<any>(0);
-  const [baD, setBaD] = useState<any>(0);
 
   useEffect(() => {
     return () => {
@@ -294,13 +287,13 @@ export const MasterActionBar = ({ turn }) => {
         </div>
       ) : (
         <button
-        className="px-4 py-4 bg-stone rounded w-screen "
-        onClick={() => {
-          nextRound();
-        }}
-      >
-        Proxima Rodada ➡️
-      </button>
+          className="px-4 py-4 bg-stone rounded w-screen "
+          onClick={() => {
+            nextRound();
+          }}
+        >
+          Proxima Rodada ➡️
+        </button>
       )}
     </>
   );

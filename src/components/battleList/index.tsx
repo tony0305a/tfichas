@@ -18,31 +18,20 @@ import { useEtc } from "../../contexts/etcProvider";
 import { AuthContext } from "../../contexts/authProvider";
 import { PlayerActionBar } from "../actionBars/player";
 import { MasterActionBar } from "../actionBars/master";
+import { useCharacters } from "../../contexts/charactersProvider";
+import { useBattle } from "../../contexts/battleProvider";
+import { useTargets } from "../../contexts/targetProvider";
+import { useTurn } from "../../contexts/turnProvider";
 
 export const BattleList = ({ role }) => {
   const [show, setShow] = useState<any>(false);
   const [active, setActive] = useState<any>(false);
 
-  const {
-    getMod,
-    battleUnsub,
-    battlePart,
-    turnUnsub,
-    turno,
-    targetsUnsub,
-    targets,
-    rollDx,
-    logRoll,
-    rodada,
-    characters,
-    charactersUnsub,
-  } = useEtc();
-  const [char, setChar] = useState<any>([]);
-  const [meleeW, setMeleeW] = useState<any>(0);
-  const [meleeWQnt, setMeleeWQnt] = useState<any>(0);
-  const [meleeHit, setMeleeHit] = useState<any>(0);
-  const [modMeleeDmg, setModMeleeDmg] = useState<any>(0);
-  const [modRangedDmg, setModRangedDmg] = useState<any>(0);
+  const { getMod, rollDx, logRoll } = useEtc();
+  const { charactersUnsub, characters } = useCharacters();
+  const { battleUnsub, battlePart } = useBattle();
+  const { targetsUnsub, targets } = useTargets();
+  const { turnUnsub, turno, rodada } = useTurn();
 
   useEffect(() => {
     return () => {
@@ -55,16 +44,18 @@ export const BattleList = ({ role }) => {
 
   const joinBattle = async () => {
     const dRoll = rollDx(20);
-    const initRoll = dRoll + getMod(char.destreza);
+    const initRoll = dRoll + getMod(characters[0].destreza);
     const df = await addDoc(collection(db, "battle"), characters[0]);
     updateDoc(doc(db, "battle", df.id), {
       battleId: df.id,
       iniciativa: initRoll,
     });
     logRoll(
-      char.nome,
+      characters[0].nome,
       dRoll,
-      `| Mod. DES ${getMod(char.destreza)} Iniciativa Total [${initRoll}] `
+      `| Mod. DES ${getMod(
+        characters[0].destreza
+      )} Iniciativa Total [${initRoll}] `
     );
   };
 
@@ -151,7 +142,7 @@ export const BattleList = ({ role }) => {
       ) : (
         <>
           {active ? (
-            <PlayerActionBar char={char} />
+            <PlayerActionBar/>
           ) : (
             <div className="flex flex-col items-center justify-center ">
               <button

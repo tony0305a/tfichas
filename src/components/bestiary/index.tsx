@@ -1,22 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import { NewBestiaryEntry } from "./newBestiaryEntry";
 import { BestiaryCard } from "./bestiaryCard";
-import { collection, onSnapshot, query } from "firebase/firestore";
-import { db } from "../../firestore";
-import { EtcContext, useEtc } from "../../contexts/etcProvider";
+import { useBestiary } from "../../contexts/bestiartProvider";
 
 export const Bestiary = () => {
   const [show, setShow] = useState<boolean>(false);
 
-  const { bestiary, bestiaryUnsub } = useEtc();
+  const { bestiary, bestiaryUnsub } = useBestiary();
 
   useEffect(() => {
     return () => bestiaryUnsub();
   }, []);
-
-  if (bestiary == undefined) {
-    return <h1>loading</h1>;
-  }
 
   return (
     <div className="flex flex-col w-screen border-4 border-red-900 ">
@@ -26,9 +20,16 @@ export const Bestiary = () => {
         </span>
       </div>
       <div className="flex flex-row gap-2 flex-wrap max-w-full items-center justify-center ">
-        {bestiary.map((item: any, index: any) => (
-          <BestiaryCard key={index} item={item} />
-        ))}
+        {bestiary != undefined ? (
+          <>
+            {" "}
+            {bestiary.map((item: any, index: any) => (
+              <BestiaryCard key={index} item={item} />
+            ))}
+          </>
+        ) : (
+          <></>
+        )}
       </div>
       <button
         onClick={() => {
