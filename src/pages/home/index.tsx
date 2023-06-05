@@ -48,7 +48,7 @@ export const Home = () => {
   const [notes, setNotes] = useState<any>("");
   const navigate = useNavigate();
 
-  const { roll, getMod, unsubRolls, rolls, rollDx, logRoll } = useEtc();
+  const { roll, getMod, unsubRolls, rolls, rollDx, logRoll, charactersUnsub, characters } = useEtc();
   const { auth, sessionName, sessionCharacters, sessionRole } =
     useContext(AuthContext);
 
@@ -61,6 +61,7 @@ export const Home = () => {
     return () => {
       unsubRolls();
       auth();
+      charactersUnsub();
     };
   }, []);
 
@@ -240,9 +241,9 @@ export const Home = () => {
           </span>
         </div>
         <div className="flex flex-row flex-wrap">
-          {sessionCharacters != undefined ? (
+          {characters != undefined ? (
             <>
-              {sessionCharacters.map((item: any, id: any) =>
+              {characters.map((item: any, id: any) =>
                 id == 0 ? (
                   <div
                     key={id}

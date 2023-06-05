@@ -22,20 +22,21 @@ import { MasterActionBar } from "../actionBars/master";
 export const BattleList = ({ role }) => {
   const [show, setShow] = useState<any>(false);
   const [active, setActive] = useState<any>(false);
+  const [inCombat, setInCombat] = useState<any>(false);
 
   const {
     getMod,
     battleUnsub,
     battlePart,
-    bestiaryUnsub,
     turnUnsub,
     turno,
     targetsUnsub,
     targets,
     rollDx,
     logRoll,
-    setRodada,
-    rodada
+    rodada,
+    characters,
+    charactersUnsub,
   } = useEtc();
   const { sessionCharacters, auth } = useContext(AuthContext);
   const [char, setChar] = useState<any>([]);
@@ -50,8 +51,10 @@ export const BattleList = ({ role }) => {
       battleUnsub();
       targetsUnsub();
       turnUnsub();
+      charactersUnsub();
     };
   }, []);
+
   useEffect(() => {
     if (sessionCharacters != undefined) {
       setChar(sessionCharacters[0]);
@@ -63,7 +66,6 @@ export const BattleList = ({ role }) => {
   const joinBattle = async () => {
     const dRoll = rollDx(20);
     const initRoll = dRoll + getMod(char.destreza);
-
     const df = await addDoc(collection(db, "battle"), sessionCharacters[0]);
     updateDoc(doc(db, "battle", df.id), {
       battleId: df.id,
@@ -105,9 +107,9 @@ export const BattleList = ({ role }) => {
           Batalha
         </span>
       </div>
-      <div className="flex flex-col" >
-         <span>Rodada:{rodada}</span> 
-         <span>Turno:{turno}</span> 
+      <div className="flex flex-col">
+        <span>Rodada:{rodada}</span>
+        <span>Turno:{turno}</span>
       </div>
       <div className="flex flex-col flex-wrap items-center bg-grey-900 ">
         <span>Combate</span>

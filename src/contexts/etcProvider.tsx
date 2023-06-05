@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { createContext, useCallback, useContext, useState } from "react";
 import { db } from "../firestore";
+import { AuthContext } from "./authProvider";
 
 type Etc = {
   roll: (dice: any) => any;
@@ -57,11 +58,15 @@ type Etc = {
   nextRound: () => any;
   rodada: any;
   setRodada: any;
+  charactersUnsub: () => any;
+  characters: any;
+  pvaControl: (id:any,amount:any) => any;
 };
 
 export const EtcContext = createContext<Etc | null>(null);
 
 export const EtcProvider = ({ children }) => {
+  const { sessionLogin } = useContext(AuthContext);
   //USESTATES
   const [rolls, setRolls] = useState<any>([]);
   const [bestiary, setBestiary] = useState<any>([]);
@@ -69,6 +74,7 @@ export const EtcProvider = ({ children }) => {
   const [targets, setTargets] = useState<any>([]);
   const [turno, setTurno] = useState<any>(0);
   const [rodada, setRodada] = useState<any>(0);
+  const [characters, setCharacters] = useState<any>([]);
 
   var originalDb = true;
 
@@ -153,6 +159,19 @@ export const EtcProvider = ({ children }) => {
   const rollDx = (dice: number) => {
     var diceRoll = Math.floor(Math.random() * dice) + 1;
     return diceRoll;
+  };
+
+  const charactersUnsub = async () => {
+    const q = query(
+      collection(db, "characters"),
+      where("belongsTo", "==", localStorage.getItem("@login"))
+    );
+    onSnapshot(q, async (state) => {
+      setCharacters([]);
+      state.forEach((i) => {
+        setCharacters((prev) => [...prev, i.data()]);
+      });
+    });
   };
 
   const logRoll = (sessionName: string, roll: number, text: string) => {
@@ -495,6 +514,13 @@ export const EtcProvider = ({ children }) => {
 
   const syncronizeTurn = async () => {};
 
+  const pvaControl = async (id: any, amount: any) => {
+    const i = await getDoc(doc(db, "battle", id));
+    var pva = parseInt(i.data().pva);
+    var newPva = pva + amount;
+    updateDoc(i.ref, { pva: newPva });
+  };
+
   const contextValue = {
     roll: useCallback((dice: any) => roll(dice), []),
     getTime: useCallback(() => getTime(), []),
@@ -556,6 +582,12 @@ export const EtcProvider = ({ children }) => {
     nextRound: useCallback(() => nextRound(), []),
     setRodada,
     rodada,
+    charactersUnsub: useCallback(() => charactersUnsub(), []),
+    characters,
+    pvaControl: useCallback(
+      (id: any, amount: any) => pvaControl(id, amount),
+      []
+    ),
   };
 
   return (
@@ -591,6 +623,9 @@ export const useEtc = () => {
     nextRound,
     setRodada,
     rodada,
+    characters,
+    charactersUnsub,
+    pvaControl,
   } = useContext(EtcContext);
   return {
     roll,
@@ -619,5 +654,8 @@ export const useEtc = () => {
     nextRound,
     setRodada,
     rodada,
+    characters,
+    charactersUnsub,
+    pvaControl,
   };
 };

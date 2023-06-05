@@ -412,8 +412,6 @@ export const EditCharacter = ({ usuario, item }) => {
               type="reset"
               className="py-3 px-2 m-2 bg-green-700 w-full rounded font-semibold text-white text-sm transition-colors hover:bg-grenn-500 focus:ring-2 ring-white"
               onClick={() => {
-                console.log(item);
-
                 editCharacter(
                   usuario,
                   nome,

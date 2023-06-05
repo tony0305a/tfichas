@@ -15,32 +15,11 @@ import { db } from "../../firestore";
 import { useContext, useEffect, useState } from "react";
 import { HealthBar } from "../HealthBar";
 import { useEtc } from "../../contexts/etcProvider";
-import { AuthContext } from "../../contexts/authProvider";
+import plus from "../../svgs/plus.png"
+import minus from "../../svgs/minus.png"
 
 export const BattleListCard = ({ role, item, turn }) => {
-  const { getTime, getMod } = useEtc();
-  const { sessionCharacters } = useContext(AuthContext);
-
-  const [modMelee, setModMelee] = useState<any>(0);
-  const [meleeW, setMeleeW] = useState<any>(
-    item.meleeWeapon || turn.meleeWeapon
-  );
-  const [meleeWQnt, setMeleeWQnt] = useState<any>(
-    item.meleeWeaponQnt || turn.meleeWeapon
-  );
-
-  const [modRanged, setModRanged] = useState<any>(0);
-  const [rangedW, setRangedW] = useState<any>(
-    item.rangedWeapon || turn.meleeWeapon
-  );
-  const [rangedWQnt, setRangedWQnt] = useState<any>(
-    item.rangedWeaponQnt || turn.meleeWeapon
-  );
-
-  const [modMeleeDmg, setModMeleeDmg] = useState<any>(0);
-  const [modRangedDmg, setModRangedDmg] = useState<any>(0);
-
-  const character = sessionCharacters[0];
+  const { getMod, characters, pvaControl } = useEtc();
 
   const targetList = async (item: any, character: any) => {
     const df = await addDoc(collection(db, "targets"), {
@@ -52,7 +31,7 @@ export const BattleListCard = ({ role, item, turn }) => {
         parseInt(item.escudo) +
         getMod(item.destreza),
       targetPic: item.pic,
-      targetBattleId:item.battleId,
+      targetBattleId: item.battleId,
 
       targetedBy: character.nome,
       targetedMeleeW: character.meleeWeapon,
@@ -64,7 +43,7 @@ export const BattleListCard = ({ role, item, turn }) => {
       targetedFor: character.força,
       targetedDes: character.destreza,
       targetedPic: character.pic,
-      targetedBattleId:character.battleId,
+      targetedBattleId: turn.battleId,
       id: 0,
     });
     updateDoc(doc(db, "targets", df.id), { id: df.id });
@@ -80,7 +59,7 @@ export const BattleListCard = ({ role, item, turn }) => {
         parseInt(item.escudo) +
         getMod(item.destreza),
       targetPic: item.pic,
-      targetBattleId:item.battleId,
+      targetBattleId: item.battleId,
 
       targetedBy: turn.nome,
       targetedMeleeW: turn.meleeWeapon,
@@ -92,13 +71,13 @@ export const BattleListCard = ({ role, item, turn }) => {
       targetedFor: turn.força,
       targetedDes: turn.destreza,
       targetedPic: turn.pic,
-      targetedBattleId:turn.battleId,
+      targetedBattleId: turn.battleId,
       id: 0,
     });
     updateDoc(doc(db, "targets", df.id), { id: df.id });
   };
-  
-  if (character == undefined) {
+
+  if (characters == undefined) {
     return <h1>loading</h1>;
   }
 
@@ -128,7 +107,7 @@ export const BattleListCard = ({ role, item, turn }) => {
           if (role == 0) {
             masterTarget(item);
           } else {
-            targetList(item, character);
+            targetList(item, characters[0]);
           }
         }}
         className="border-4 border-red rounded-full m-1 w-[148px] h-[148px] "
@@ -147,9 +126,13 @@ export const BattleListCard = ({ role, item, turn }) => {
           <></>
         )}
         {role == 0 ? (
-          <span>
-            {item.pva}/{item.pv}
-          </span>
+          <div className="flex flex-row items-center " >
+            <img src={minus} onClick={()=>pvaControl(item.battleId,-1)} className="w-6 cursor-pointer" />
+            <span>
+              {item.pva}/{item.pv}
+            </span>
+            <img src={plus} onClick={()=>pvaControl(item.battleId,1)} className="w-6 cursor-pointer" />
+          </div>
         ) : (
           <></>
         )}
