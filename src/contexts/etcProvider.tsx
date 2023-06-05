@@ -60,7 +60,7 @@ type Etc = {
   setRodada: any;
   charactersUnsub: () => any;
   characters: any;
-  pvaControl: (id:any,amount:any) => any;
+  pvaControl: (id: any, amount: any) => any;
 };
 
 export const EtcContext = createContext<Etc | null>(null);

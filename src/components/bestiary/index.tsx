@@ -26,7 +26,7 @@ export const Bestiary = () => {
         </span>
       </div>
       <div className="flex flex-row gap-2 flex-wrap max-w-full items-center justify-center ">
-        {bestiary.map((item, index) => (
+        {bestiary.map((item: any, index: any) => (
           <BestiaryCard key={index} item={item} />
         ))}
       </div>

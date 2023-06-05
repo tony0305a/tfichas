@@ -15,9 +15,9 @@ type Auth = {
   auth: () => any;
   logoff: () => any;
   sessionName: any;
-  sessionCharacters:any;
-  sessionRole:any;
-  sessionLogin:any;
+  sessionCharacters: any;
+  sessionRole: any;
+  sessionLogin: any;
 };
 
 export const AuthContext = createContext<Auth | null>(null);
@@ -43,11 +43,11 @@ export const AuthProvider = ({ children }) => {
         collection(db, "characters"),
         where("belongsTo", "==", login)
       );
-      try{
+      try {
         const charFind = await getDocs(charFindQ);
         setSessionCharacters([charFind.docs[0].data()]);
-      }catch(e){
-        setSessionCharacters([{}])
+      } catch (e) {
+        setSessionCharacters([{}]);
       }
     } catch (e) {
       throw e;
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
     sessionName,
     sessionCharacters,
     sessionLogin,
-    sessionRole
+    sessionRole,
   };
 
   return (

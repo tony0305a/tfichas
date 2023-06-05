@@ -48,7 +48,16 @@ export const Home = () => {
   const [notes, setNotes] = useState<any>("");
   const navigate = useNavigate();
 
-  const { roll, getMod, unsubRolls, rolls, rollDx, logRoll, charactersUnsub, characters } = useEtc();
+  const {
+    roll,
+    getMod,
+    unsubRolls,
+    rolls,
+    rollDx,
+    logRoll,
+    charactersUnsub,
+    characters,
+  } = useEtc();
   const { auth, sessionName, sessionCharacters, sessionRole } =
     useContext(AuthContext);
 
@@ -243,278 +252,274 @@ export const Home = () => {
         <div className="flex flex-row flex-wrap">
           {characters != undefined ? (
             <>
-              {characters.map((item: any, index: any) =>
-                index == 0 || index > 0 ? (
-                  <div
-                    key={index}
-                    className=" w-screen flex flex-col mt-2 m-1 rounded-t-md border-4 border-red-900 xl:w-2/5  "
-                  >
-                    <div className="bg-red-900 flex flex-row w-screen lg:w-full xl:w-full ">
-                      <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
-                        {item.nome}| Nv. {item.nivel} | {item.raça} |{" "}
-                        {item.classe} | {item.alinhamento} | {item.experiencia}/
-                        {item.experienciaMeta}
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <img
-                        src={item.pic}
-                        className="border-1 border-red rounded-full m-1 w-[148px] h-[148px] self-center "
-                      />
-                      <div className="w-screen flex flex-row  justify-self-auto ">
-                        <div className="flex flex-col">
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-base">
-                            Atributos
+              {characters.map((item: any, index: any) => (
+                <div
+                  key={index}
+                  className=" w-screen flex flex-col mt-2 m-1 rounded-t-md border-4 border-red-900 xl:w-2/5  "
+                >
+                  <div className="bg-red-900 flex flex-row w-screen lg:w-full xl:w-full ">
+                    <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
+                      {item.nome}| Nv. {item.nivel} | {item.raça} |{" "}
+                      {item.classe} | {item.alinhamento} | {item.experiencia}/
+                      {item.experienciaMeta}
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <img
+                      src={item.pic}
+                      className="border-1 border-red rounded-full m-1 w-[148px] h-[148px] self-center "
+                    />
+                    <div className="w-screen flex flex-row  justify-self-auto ">
+                      <div className="flex flex-col">
+                        <span className="text-xs  p-1  font-bold md:text-sm lg:text-base">
+                          Atributos
+                        </span>
+
+                        <div className="flex flex-row  items-center">
+                          <span className="text-xs p-1 md:text-sm lg:text-base">
+                            Força:{item.força}
+                            {"["}
+                            {getMod(item.força)}
+                            {"]"}
+                          </span>
+                          <button
+                            className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                            onClick={() =>
+                              attrTest("Força", item.força, item.nome)
+                            }
+                          >
+                            💪🏼
+                          </button>
+                        </div>
+                        <div className="flex flex-row  items-center">
+                          <span className="text-xs p-1 md:text-sm lg:text-base">
+                            Destreza:{item.destreza}
+                            {"["}
+                            {getMod(item.destreza)}
+                            {"]"}
+                          </span>
+                          <button
+                            className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                            onClick={() =>
+                              attrTest("Destreza", item.destreza, item.nome)
+                            }
+                          >
+                            🏹
+                          </button>
+                        </div>
+                        <div className="flex flex-row  items-center">
+                          <span className="text-xs p-1 md:text-sm lg:text-base">
+                            Constituição:{item.constituicao}
+                            {"["}
+                            {getMod(item.constituicao)}
+                            {"]"}
+                          </span>
+                          <button
+                            className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                            onClick={() =>
+                              attrTest(
+                                "Constituição",
+                                item.constituicao,
+                                item.nome
+                              )
+                            }
+                          >
+                            🗿
+                          </button>
+                        </div>
+                        <div className="flex flex-row  items-center">
+                          <span className="text-xs p-1 md:text-sm lg:text-base">
+                            Inteligência:{item.inteligencia}
+                            {"["}
+                            {getMod(item.inteligencia)}
+                            {"]"}
+                          </span>
+                          <button
+                            className="py-3 px-4 m-2 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                            onClick={() =>
+                              attrTest(
+                                "Inteligência",
+                                item.inteligencia,
+                                item.nome
+                              )
+                            }
+                          >
+                            🧠
+                          </button>
+                        </div>
+                        <div className="flex flex-row  items-center">
+                          <span className="text-xs p-1 md:text-sm lg:text-base">
+                            Sabedoria:{item.sabedoria}
+                            {"["}
+                            {getMod(item.sabedoria)}
+                            {"]"}
+                          </span>
+                          <button
+                            className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                            onClick={() =>
+                              attrTest("Sabedoria", item.sabedoria, item.nome)
+                            }
+                          >
+                            🦉
+                          </button>
+                        </div>
+                        <div className="flex flex-row  items-center">
+                          <span className="text-xs p-1 md:text-sm lg:text-base">
+                            Carisma:{item.carisma}
+                            {"["}
+                            {getMod(item.carisma)}
+                            {"]"}
+                          </span>
+                          <button
+                            className="py-3 px-4 m-2 bg-sky rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                            onClick={() =>
+                              attrTest("Carisma", item.carisma, item.nome)
+                            }
+                          >
+                            🗣️
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-row flex-wrap  ">
+                        <div className="flex flex-col flex-wrap ">
+                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                            Est. de Combate
+                          </span>
+                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                            (❤️)PV:DV({item.dv})+CON(
+                            {parseInt(item.constituicao) <= 8
+                              ? "-1"
+                              : parseInt(item.constituicao) <= 12
+                              ? "+0"
+                              : parseInt(item.constituicao) <= 14
+                              ? "+1"
+                              : parseInt(item.constituicao) <= 16
+                              ? "+2"
+                              : parseInt(item.constituicao) <= 18
+                              ? "+3"
+                              : "+4"}
+                            ):{item.pva}/{item.pv}
+                          </span>
+                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                            (🛡️)CA({item.ca})+DES({getMod(item.destreza)})
+                          </span>
+                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                            +ARMADURA({item.armadura})+ESCUDO({item.escudo})
+                          </span>
+                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                            TOTAL(
+                            {parseInt(item.ca) +
+                              getMod(item.destreza) +
+                              parseInt(item.armadura) +
+                              parseInt(item.escudo)}
+                            )
+                          </span>
+                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                            (⚔️)B.A: {item.ba}
+                          </span>
+                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                            (🏹)B.A: {item.baD}
                           </span>
 
-                          <div className="flex flex-row  items-center">
-                            <span className="text-xs p-1 md:text-sm lg:text-base">
-                              Força:{item.força}
-                              {"["}
-                              {getMod(item.força)}
-                              {"]"}
+                          <div>
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              JPD: {item.jpd}
                             </span>
                             <button
-                              className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                              onClick={() =>
-                                attrTest("Força", item.força, item.nome)
-                              }
-                            >
-                              💪🏼
-                            </button>
-                          </div>
-                          <div className="flex flex-row  items-center">
-                            <span className="text-xs p-1 md:text-sm lg:text-base">
-                              Destreza:{item.destreza}
-                              {"["}
-                              {getMod(item.destreza)}
-                              {"]"}
-                            </span>
-                            <button
+                              onClick={() => {
+                                saveThorws(
+                                  "JPD",
+                                  item.destreza,
+                                  item.jpd,
+                                  item.nome
+                                );
+                              }}
                               className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                              onClick={() =>
-                                attrTest("Destreza", item.destreza, item.nome)
-                              }
                             >
-                              🏹
+                              🛡️
                             </button>
                           </div>
-                          <div className="flex flex-row  items-center">
-                            <span className="text-xs p-1 md:text-sm lg:text-base">
-                              Constituição:{item.constituicao}
-                              {"["}
-                              {getMod(item.constituicao)}
-                              {"]"}
+                          <div>
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              JPC: {item.jpc}
                             </span>
                             <button
-                              className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                              onClick={() =>
-                                attrTest(
-                                  "Constituição",
+                              onClick={() => {
+                                saveThorws(
+                                  "JPC",
                                   item.constituicao,
+                                  item.jpc,
                                   item.nome
-                                )
-                              }
+                                );
+                              }}
+                              className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
                             >
-                              🗿
+                              🛡️
                             </button>
                           </div>
-                          <div className="flex flex-row  items-center">
-                            <span className="text-xs p-1 md:text-sm lg:text-base">
-                              Inteligência:{item.inteligencia}
-                              {"["}
-                              {getMod(item.inteligencia)}
-                              {"]"}
+                          <div>
+                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
+                              JPS: {item.jps}
                             </span>
                             <button
-                              className="py-3 px-4 m-2 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                              onClick={() =>
-                                attrTest(
-                                  "Inteligência",
-                                  item.inteligencia,
+                              onClick={() => {
+                                saveThorws(
+                                  "JPS",
+                                  item.sabedoria,
+                                  item.jps,
                                   item.nome
-                                )
-                              }
-                            >
-                              🧠
-                            </button>
-                          </div>
-                          <div className="flex flex-row  items-center">
-                            <span className="text-xs p-1 md:text-sm lg:text-base">
-                              Sabedoria:{item.sabedoria}
-                              {"["}
-                              {getMod(item.sabedoria)}
-                              {"]"}
-                            </span>
-                            <button
+                                );
+                              }}
                               className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                              onClick={() =>
-                                attrTest("Sabedoria", item.sabedoria, item.nome)
-                              }
                             >
-                              🦉
-                            </button>
-                          </div>
-                          <div className="flex flex-row  items-center">
-                            <span className="text-xs p-1 md:text-sm lg:text-base">
-                              Carisma:{item.carisma}
-                              {"["}
-                              {getMod(item.carisma)}
-                              {"]"}
-                            </span>
-                            <button
-                              className="py-3 px-4 m-2 bg-sky rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                              onClick={() =>
-                                attrTest("Carisma", item.carisma, item.nome)
-                              }
-                            >
-                              🗣️
+                              🛡️
                             </button>
                           </div>
                         </div>
-
-                        <div className="flex flex-row flex-wrap  ">
-                          <div className="flex flex-col flex-wrap ">
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              Est. de Combate
-                            </span>
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              (❤️)PV:DV({item.dv})+CON(
-                              {parseInt(item.constituicao) <= 8
-                                ? "-1"
-                                : parseInt(item.constituicao) <= 12
-                                ? "+0"
-                                : parseInt(item.constituicao) <= 14
-                                ? "+1"
-                                : parseInt(item.constituicao) <= 16
-                                ? "+2"
-                                : parseInt(item.constituicao) <= 18
-                                ? "+3"
-                                : "+4"}
-                              ):{item.pva}/{item.pv}
-                            </span>
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              (🛡️)CA({item.ca})+DES({getMod(item.destreza)})
-                            </span>
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              +ARMADURA({item.armadura})+ESCUDO({item.escudo})
-                            </span>
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              TOTAL(
-                              {parseInt(item.ca) +
-                                getMod(item.destreza) +
-                                parseInt(item.armadura) +
-                                parseInt(item.escudo)}
-                              )
-                            </span>
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              (⚔️)B.A: {item.ba}
-                            </span>
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              (🏹)B.A: {item.baD}
-                            </span>
-
-                            <div>
-                              <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                                JPD: {item.jpd}
-                              </span>
-                              <button
-                                onClick={() => {
-                                  saveThorws(
-                                    "JPD",
-                                    item.destreza,
-                                    item.jpd,
-                                    item.nome
-                                  );
-                                }}
-                                className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                              >
-                                🛡️
-                              </button>
-                            </div>
-                            <div>
-                              <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                                JPC: {item.jpc}
-                              </span>
-                              <button
-                                onClick={() => {
-                                  saveThorws(
-                                    "JPC",
-                                    item.constituicao,
-                                    item.jpc,
-                                    item.nome
-                                  );
-                                }}
-                                className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                              >
-                                🛡️
-                              </button>
-                            </div>
-                            <div>
-                              <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                                JPS: {item.jps}
-                              </span>
-                              <button
-                                onClick={() => {
-                                  saveThorws(
-                                    "JPS",
-                                    item.sabedoria,
-                                    item.jps,
-                                    item.nome
-                                  );
-                                }}
-                                className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                              >
-                                🛡️
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="w-screen  h-60  flex flex-col items-center lg:w-full xl:w-full  ">
-                        <textarea
-                          defaultValue={item.notes}
-                          onChange={(e) => {
-                            setNotes(e.target.value);
-                            console.log(notes);
-                          }}
-                          className="bg-grey-700 w-screen h-full lg:w-full xl:w-full"
-                        />
-                        <button
-                          onClick={() => {
-                            addNote(item.id, notes);
-                          }}
-                          className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                        >
-                          Salvar
-                        </button>
                       </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        if (showEdit) {
-                          setShowEdit(false);
-                        } else {
-                          setShowEdit(true);
-                        }
-                      }}
-                      className="py-3 px-4 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                    >
-                      Editar
-                    </button>
-                    {showEdit ? (
-                      <EditCharacter
-                        usuario={localStorage.getItem("@login")}
-                        item={item}
+                    <div className="w-screen  h-60  flex flex-col items-center lg:w-full xl:w-full  ">
+                      <textarea
+                        defaultValue={item.notes}
+                        onChange={(e) => {
+                          setNotes(e.target.value);
+                          console.log(notes);
+                        }}
+                        className="bg-grey-700 w-screen h-full lg:w-full xl:w-full"
                       />
-                    ) : (
-                      <></>
-                    )}
+                      <button
+                        onClick={() => {
+                          addNote(item.id, notes);
+                        }}
+                        className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                      >
+                        Salvar
+                      </button>
+                    </div>
                   </div>
-                ) : (
-                  <></>
-                )
-              )}
+                  <button
+                    onClick={() => {
+                      if (showEdit) {
+                        setShowEdit(false);
+                      } else {
+                        setShowEdit(true);
+                      }
+                    }}
+                    className="py-3 px-4 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+                  >
+                    Editar
+                  </button>
+                  {showEdit ? (
+                    <EditCharacter
+                      usuario={localStorage.getItem("@login")}
+                      item={item}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              ))}
             </>
           ) : (
             <></>
