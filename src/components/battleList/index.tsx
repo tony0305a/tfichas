@@ -22,7 +22,6 @@ import { MasterActionBar } from "../actionBars/master";
 export const BattleList = ({ role }) => {
   const [show, setShow] = useState<any>(false);
   const [active, setActive] = useState<any>(false);
-  const [inCombat, setInCombat] = useState<any>(false);
 
   const {
     getMod,
@@ -53,14 +52,6 @@ export const BattleList = ({ role }) => {
       charactersUnsub();
     };
   }, []);
-
-  useEffect(() => {
-    if (characters != undefined) {
-      setChar(characters[0]);
-      setMeleeW(characters[0].meleeWeapon);
-      setMeleeWQnt(characters[0].meleeWeaponQnt);
-    }
-  }, [characters]);
 
   const joinBattle = async () => {
     const dRoll = rollDx(20);
