@@ -21,7 +21,7 @@ export const PlayerActionBar = () => {
     });
   });
 
-  return ( 
+  return (
     <>
       {turnOf != undefined ? (
         <>
@@ -221,7 +221,7 @@ export const PlayerActionBar = () => {
                   <input
                     defaultValue={localStorage.getItem("healDices")}
                     onChange={(e) =>
-                      localStorage.setItem("healDices", e.target.value) 
+                      localStorage.setItem("healDices", e.target.value)
                     }
                     className="w-6 bg-grey-800 text-center "
                     type="text"

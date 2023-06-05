@@ -49,21 +49,33 @@ export const Home = () => {
   const [notes, setNotes] = useState<any>("");
   const navigate = useNavigate();
   const { charactersUnsub, characters } = useCharacters();
-
+  const [session, setSession] = useState<any>();
+  const [sRole, setSRole] = useState<any>(0);
   const { roll, getMod, unsubRolls, rolls, rollDx, logRoll } = useEtc();
   const { auth, sessionName, sessionRole } = useContext(AuthContext);
 
   useEffect(() => {
+    const auth = async () => {
+      const q = query(
+        collection(db, "users"),
+        where("id", "==", localStorage.getItem("uid"))
+      );
+      const aut = await getDocs(collection(db, "users"));
+      sessionName(aut.docs[0].data().name);
+      setSRole(aut.docs[0].data().role);
+    };
+
     try {
       auth();
     } catch (e) {
       navigate("/");
     }
+
     return () => {
       unsubRolls();
       charactersUnsub();
     };
-  }, []);
+  });
 
   const logoff = () => {
     localStorage.removeItem("@login");
@@ -117,7 +129,7 @@ export const Home = () => {
       <header className="w-screen flex flex-col items-center bg-grey-900">
         <div className="flex flex-row w-screen h-100 bg-grey-800 items-center justify-between px-8">
           <span className="text-xs md:text-sm lg:text-base">
-            Logado como: {sessionName}
+            Logado como: {session}
           </span>
           <button
             onClick={logoff}
@@ -224,7 +236,7 @@ export const Home = () => {
         </div>
       </header>
       <div className="bg-grey-900 flex items-center justify-center">
-        <BattleList role={sessionRole} />
+        <BattleList role={sRole} />
       </div>
       {sessionRole == 0 ? (
         <div className="bg-grey-900 flex items-center justify-center">
