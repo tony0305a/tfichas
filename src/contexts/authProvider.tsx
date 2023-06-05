@@ -35,13 +35,12 @@ export const AuthProvider = ({ children }) => {
         where("id", "==", localStorage.getItem("uid"))
       );
       const stateQuery = await getDocs(q);
-      var login = stateQuery.docs[0].data().login;
       setSessionName(stateQuery.docs[0].data().name);
       setSessionLogin(stateQuery.docs[0].data().login);
       setSessionRole(stateQuery.docs[0].data().role);
       const charFindQ = query(
         collection(db, "characters"),
-        where("belongsTo", "==", login)
+        where("belongsTo", "==", localStorage.getItem("@login"))
       );
       try {
         const charFind = await getDocs(charFindQ);
