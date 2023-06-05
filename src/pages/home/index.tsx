@@ -57,6 +57,7 @@ export const Home = () => {
     logRoll,
     charactersUnsub,
     characters,
+    bestiary
   } = useEtc();
   const { auth, sessionName, sessionCharacters, sessionRole } =
     useContext(AuthContext);
@@ -237,6 +238,9 @@ export const Home = () => {
       </div>
       {sessionRole == 0 ? (
         <div className="bg-grey-900 flex items-center justify-center">
+          <button onClick={()=>{console.log(bestiary)}} >
+            Teste
+          </button>
           <Bestiary />
         </div>
       ) : (
@@ -250,6 +254,9 @@ export const Home = () => {
           </span>
         </div>
         <div className="flex flex-row flex-wrap">
+          <button onClick={()=>{console.log(characters)}} >
+            Teste
+          </button>
           {characters != undefined ? (
             <>
               {characters.map((item: any, index: any) => (
