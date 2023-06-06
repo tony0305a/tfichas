@@ -45,9 +45,9 @@ export const Home = () => {
     }
 
     return () => {
+      auth();
       unsubRolls();
       charactersUnsub();
-      auth();
       bestiaryUnsub();
       battleUnsub();
       turnUnsub();
