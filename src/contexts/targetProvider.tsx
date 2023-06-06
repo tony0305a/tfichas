@@ -1,4 +1,4 @@
-import { query, collection, onSnapshot } from "firebase/firestore";
+import { query, collection, onSnapshot, limit } from "firebase/firestore";
 import { createContext, useCallback, useContext, useState } from "react";
 import { db } from "../firestore";
 
@@ -13,7 +13,7 @@ export const TargetsProvider = ({ children }) => {
   const [targets, setTargets] = useState<any>([]);
 
   const targetsUnsub = async () => {
-    const q = query(collection(db, "targets"));
+    const q = query(collection(db, "targets"),limit(1));
     onSnapshot(q, (qSnap) => {
       setTargets([]);
       qSnap.forEach((doc) => {
