@@ -43,6 +43,7 @@ export const Home = () => {
     } catch (e) {
       navigate("/");
     }
+    unsubRolls();
     charactersUnsub();
     bestiaryUnsub();
     battleUnsub();
