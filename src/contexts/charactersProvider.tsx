@@ -5,12 +5,26 @@ import { db } from "../firestore";
 type Char = {
   charactersUnsub: () => any;
   characters: any;
+  bestiaryUnsub: () => any;
+  bestiary: any;
 };
 
 export const CharactersContext = createContext<Char | null>(null);
 
 export const CharactersProvider = ({ children }) => {
   const [characters, setCharacters] = useState<any>([]);
+  const [bestiary, setBestiary] = useState<any>([]);
+
+
+  const bestiaryUnsub = async () => {
+    const q = query(collection(db, "PdMs"));
+    onSnapshot(q, (querySnapShot) => {
+      setBestiary([]);
+      querySnapShot.forEach((item) => {
+        setBestiary((prev: any) => [...prev, item.data()]);
+      });
+    });
+  };
 
   const charactersUnsub = async () => {
     const q = query(
@@ -20,7 +34,7 @@ export const CharactersProvider = ({ children }) => {
     onSnapshot(q, async (state) => {
       setCharacters([]);
       state.forEach((i) => {
-        setCharacters((prev) => [...prev, i.data()]);
+        setCharacters((prev:any) => [...prev, i.data()]);
       });
     });
   };
@@ -28,6 +42,8 @@ export const CharactersProvider = ({ children }) => {
   const contextValue = {
     charactersUnsub: useCallback(() => charactersUnsub(), []),
     characters,
+    bestiaryUnsub: useCallback(() => bestiaryUnsub(), []),
+    bestiary,
   };
 
   return (
@@ -38,6 +54,7 @@ export const CharactersProvider = ({ children }) => {
 };
 
 export const useCharacters = () => {
-  const { charactersUnsub, characters } = useContext(CharactersContext);
-  return { charactersUnsub, characters };
+  const { charactersUnsub, characters, bestiaryUnsub, bestiary } =
+    useContext(CharactersContext);
+  return { charactersUnsub, characters, bestiaryUnsub, bestiary };
 };

@@ -17,6 +17,7 @@ import { BattleList } from "../../components/battleList";
 import { useAuth } from "../../contexts/authProvider";
 import { useCharacters } from "../../contexts/charactersProvider";
 import { useEtc } from "../../contexts/etcProvider";
+import { useBestiary } from "../../contexts/bestiartProvider";
 
 export const Home = () => {
   const [diceBoard, setDiceboard] = useState<any>([]);
@@ -25,6 +26,7 @@ export const Home = () => {
   const [notes, setNotes] = useState<any>("");
   const navigate = useNavigate();
   const { charactersUnsub, characters } = useCharacters();
+  const { bestiaryUnsub } = useBestiary();
   const { roll, getMod, unsubRolls, rolls, rollDx, logRoll, rolledValue } =
     useEtc();
   const { auth, sessionRole, sessionName } = useAuth();
@@ -39,7 +41,8 @@ export const Home = () => {
     return () => {
       unsubRolls();
       charactersUnsub();
-      auth()
+      auth();
+      bestiaryUnsub();
     };
   });
 
