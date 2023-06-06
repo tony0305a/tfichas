@@ -53,7 +53,7 @@ export const Home = () => {
       turnUnsub();
       targetsUnsub();
     };
-  });
+  },[]);
 
   const logoff = () => {
     localStorage.removeItem("@login");
