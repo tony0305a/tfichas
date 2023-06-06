@@ -1,16 +1,15 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Login } from "./pages/login";
-import { Home } from "./pages/home";
-import { Create } from "./pages/create";
-import { EtcProvider } from "./contexts/etcProvider";
+import { RouterProvider } from "react-router";
 import { AuthProvider } from "./contexts/authProvider";
+import { BattleProvider } from "./contexts/battleProvider";
 import { BestiaryProvider } from "./contexts/bestiartProvider";
 import { CharactersProvider } from "./contexts/charactersProvider";
-import { BattleProvider } from "./contexts/battleProvider";
-import { TurnProvider } from "./contexts/turnProvider";
+import { EtcProvider } from "./contexts/etcProvider";
 import { TargetsProvider } from "./contexts/targetProvider";
+import { TurnProvider } from "./contexts/turnProvider";
+import { createBrowserRouter } from "react-router-dom";
+import { Create } from "./pages/create";
+import { Home } from "./pages/home";
+import { Login } from "./pages/login";
 
 const router = createBrowserRouter([
   {
@@ -28,8 +27,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
+export const Provider = () => {
+  return (
     <AuthProvider>
       <CharactersProvider>
         <EtcProvider>
@@ -45,5 +44,5 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         </EtcProvider>
       </CharactersProvider>
     </AuthProvider>
-  </React.StrictMode>
-);
+  );
+};

@@ -15,7 +15,6 @@ import {
 } from "firebase/firestore";
 import { createContext, useCallback, useContext, useState } from "react";
 import { db } from "../firestore";
-import { AuthContext } from "./authProvider";
 
 type Etc = {
   roll: (dice: any) => any;
@@ -25,6 +24,7 @@ type Etc = {
   rolls: any;
   rollDx: (dice: number) => any;
   logRoll: (sessionName: string, roll: number, text: string) => any;
+  rolledValue: any;
 };
 
 export const EtcContext = createContext<Etc | null>(null);
@@ -32,6 +32,7 @@ export const EtcContext = createContext<Etc | null>(null);
 export const EtcProvider = ({ children }) => {
   //USESTATES
   const [rolls, setRolls] = useState<any>([]);
+  const [rolledValue, setRolledValue] = useState<number>(0);
 
   //FUNÇÕES
   const roll = (diceBoard: any) => {
@@ -55,6 +56,7 @@ export const EtcProvider = ({ children }) => {
       text: text,
       createdAt: serverTimestamp(),
     });
+    setRolledValue(sum);
   };
 
   const getTime = () => {
@@ -131,6 +133,7 @@ export const EtcProvider = ({ children }) => {
         logRoll(sessionName, roll, text),
       []
     ),
+    rolledValue,
   };
 
   return (
@@ -139,8 +142,16 @@ export const EtcProvider = ({ children }) => {
 };
 
 export const useEtc = () => {
-  const { roll, getTime, getMod, unsubRolls, rolls, rollDx, logRoll } =
-    useContext(EtcContext);
+  const {
+    roll,
+    getTime,
+    getMod,
+    unsubRolls,
+    rolls,
+    rollDx,
+    logRoll,
+    rolledValue,
+  } = useContext(EtcContext);
   return {
     roll,
     getTime,
@@ -149,5 +160,6 @@ export const useEtc = () => {
     rolls,
     rollDx,
     logRoll,
+    rolledValue,
   };
 };

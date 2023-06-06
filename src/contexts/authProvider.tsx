@@ -59,3 +59,22 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
+
+export const useAuth = () => {
+  const {
+    auth,
+    logoff,
+    sessionName,
+    sessionCharacters,
+    sessionLogin,
+    sessionRole,
+  } = useContext(AuthContext);
+  return {
+    auth,
+    logoff,
+    sessionName,
+    sessionCharacters,
+    sessionLogin,
+    sessionRole,
+  };
+};

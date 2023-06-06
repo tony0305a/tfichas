@@ -1,20 +1,7 @@
-import { Envelope, Lock } from "phosphor-react";
-import { Checkbox } from "../../components/Checkbox";
 import { Heading } from "../../components/Heading";
-import { Logo } from "../../components/Logo";
-import { Text } from "../../components/Text";
-import { TextInput } from "../../components/TextInput";
-import { Buttom } from "../../components/Buttom";
 import { useContext, useEffect, useRef, useState } from "react";
 import { db } from "../../firestore";
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import d4 from "../../svgs/d4.svg";
 import d6 from "../../svgs/d6.svg";
@@ -22,44 +9,27 @@ import d8 from "../../svgs/d8.svg";
 import d10 from "../../svgs/d10.svg";
 import d12 from "../../svgs/d12.svg";
 import d20 from "../../svgs/d20.svg";
-import plus from "../../svgs/plus.png";
-import minus from "../../svgs/minus.png";
 import "../../styles/global.css";
-import clsx from "clsx";
 import { NewCharacter } from "../../components/newCharacter";
 import { EditCharacter } from "../../components/editCharacter";
-import { BattleGrid } from "../../components/battleGrid";
 import { Bestiary } from "../../components/bestiary";
 import { BattleList } from "../../components/battleList";
-import { EtcContext, useEtc } from "../../contexts/etcProvider";
-import { AuthContext } from "../../contexts/authProvider";
+import { useAuth } from "../../contexts/authProvider";
 import { useCharacters } from "../../contexts/charactersProvider";
+import { useEtc } from "../../contexts/etcProvider";
 
 export const Home = () => {
-  // const [rolls, setRolls] = useState<any>([]);
-  const [rolledValue, setRolledValue] = useState<number>(0);
   const [diceBoard, setDiceboard] = useState<any>([]);
   const [show, setShow] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [notes, setNotes] = useState<any>("");
   const navigate = useNavigate();
   const { charactersUnsub, characters } = useCharacters();
-  const [session, setSession] = useState<any>();
-  const [sRole, setSRole] = useState<any>(0);
-  const { roll, getMod, unsubRolls, rolls, rollDx, logRoll } = useEtc();
-  const { auth, sessionRole } = useContext(AuthContext);
+  const { roll, getMod, unsubRolls, rolls, rollDx, logRoll, rolledValue } =
+    useEtc();
+  const { auth, sessionRole, sessionName } = useAuth();
 
   useEffect(() => {
-    const auth = async () => {
-      const q = query(
-        collection(db, "users"),
-        where("id", "==", localStorage.getItem("uid"))
-      );
-      const aut = await getDocs(collection(db, "users"));
-      session(aut.docs[0].data().name);
-      setSRole(aut.docs[0].data().role);
-    };
-
     try {
       auth();
     } catch (e) {
@@ -69,6 +39,7 @@ export const Home = () => {
     return () => {
       unsubRolls();
       charactersUnsub();
+      auth()
     };
   });
 
@@ -95,7 +66,7 @@ export const Home = () => {
     } else {
       text = `[${name}] Mod. mod ${getMod(attr)} não passa no teste de ${type}`;
     }
-    logRoll(session, diceRoll, text);
+    logRoll(sessionName, diceRoll, text);
   };
 
   const saveThorws = (
@@ -111,7 +82,7 @@ export const Home = () => {
     } else {
       text = ` [${name}] não passou na ${type}`;
     }
-    logRoll(session, diceRoll, text);
+    logRoll(sessionName, diceRoll, text);
   };
 
   const addNote = (id: any, notes: any) => {
@@ -124,7 +95,7 @@ export const Home = () => {
       <header className="w-screen flex flex-col items-center bg-grey-900">
         <div className="flex flex-row w-screen h-100 bg-grey-800 items-center justify-between px-8">
           <span className="text-xs md:text-sm lg:text-base">
-            Logado como: {session}
+            Logado como: {sessionName}
           </span>
           <button
             onClick={logoff}
@@ -231,7 +202,7 @@ export const Home = () => {
         </div>
       </header>
       <div className="bg-grey-900 flex items-center justify-center">
-        <BattleList role={sRole} />
+        <BattleList role={sessionRole} />
       </div>
       {sessionRole == 0 ? (
         <div className="bg-grey-900 flex items-center justify-center">
