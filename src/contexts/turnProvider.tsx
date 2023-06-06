@@ -27,7 +27,7 @@ export const TurnProvider = ({ children }) => {
   const [turno, setTurno] = useState<any>(0);
   const [rodada, setRodada] = useState<any>(0);
 
-  var originalDb = true;
+  var originalDb = false;
   var turnCode = "";
   if (originalDb) {
     turnCode = "lddm17IafCgfNx998Uig";
