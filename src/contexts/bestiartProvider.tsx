@@ -17,7 +17,7 @@ export const BestiaryProvider = ({ children }) => {
     onSnapshot(q, (querySnapShot) => {
       setBestiary([]);
       querySnapShot.forEach((item) => {
-        setBestiary((prev) => [...prev, item.data()]);
+        setBestiary((prev: any) => [...prev, item.data()]);
       });
     });
   };

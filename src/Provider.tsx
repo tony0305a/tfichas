@@ -30,9 +30,9 @@ const router = createBrowserRouter([
 export const Provider = () => {
   return (
     <AuthProvider>
-      <CharactersProvider>
-        <EtcProvider>
-          <TurnProvider>
+      <EtcProvider>
+        <TurnProvider>
+          <CharactersProvider>
             <BestiaryProvider>
               <BattleProvider>
                 <TargetsProvider>
@@ -40,9 +40,9 @@ export const Provider = () => {
                 </TargetsProvider>
               </BattleProvider>
             </BestiaryProvider>
-          </TurnProvider>
-        </EtcProvider>
-      </CharactersProvider>
+          </CharactersProvider>
+        </TurnProvider>
+      </EtcProvider>
     </AuthProvider>
   );
 };
