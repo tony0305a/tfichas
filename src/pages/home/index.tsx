@@ -20,6 +20,7 @@ import { useEtc } from "../../contexts/etcProvider";
 import { useBestiary } from "../../contexts/bestiartProvider";
 import { useBattle } from "../../contexts/battleProvider";
 import { useTurn } from "../../contexts/turnProvider";
+import { useTargets } from "../../contexts/targetProvider";
 
 export const Home = () => {
   const [diceBoard, setDiceboard] = useState<any>([]);
@@ -34,6 +35,7 @@ export const Home = () => {
   const { auth, sessionRole, sessionName } = useAuth();
   const { battleUnsub } = useBattle();
   const { turnUnsub } = useTurn();
+  const { targetsUnsub } = useTargets();
 
   useEffect(() => {
     try {
@@ -48,7 +50,8 @@ export const Home = () => {
       auth();
       bestiaryUnsub();
       battleUnsub();
-      turnUnsub()
+      turnUnsub();
+      targetsUnsub();
     };
   });
 
