@@ -142,7 +142,7 @@ export const BattleList = ({ role }) => {
       ) : (
         <>
           {active ? (
-            <PlayerActionBar/>
+            <PlayerActionBar />
           ) : (
             <div className="flex flex-col items-center justify-center ">
               <button
