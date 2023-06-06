@@ -43,6 +43,11 @@ export const Home = () => {
     } catch (e) {
       navigate("/");
     }
+    charactersUnsub();
+    bestiaryUnsub();
+    battleUnsub();
+    turnUnsub();
+    targetsUnsub();
 
     return () => {
       auth();
@@ -53,7 +58,7 @@ export const Home = () => {
       turnUnsub();
       targetsUnsub();
     };
-  },[]);
+  }, []);
 
   const logoff = () => {
     localStorage.removeItem("@login");
