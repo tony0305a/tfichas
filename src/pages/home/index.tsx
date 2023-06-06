@@ -18,6 +18,8 @@ import { useAuth } from "../../contexts/authProvider";
 import { useCharacters } from "../../contexts/charactersProvider";
 import { useEtc } from "../../contexts/etcProvider";
 import { useBestiary } from "../../contexts/bestiartProvider";
+import { useBattle } from "../../contexts/battleProvider";
+import { useTurn } from "../../contexts/turnProvider";
 
 export const Home = () => {
   const [diceBoard, setDiceboard] = useState<any>([]);
@@ -30,6 +32,8 @@ export const Home = () => {
   const { roll, getMod, unsubRolls, rolls, rollDx, logRoll, rolledValue } =
     useEtc();
   const { auth, sessionRole, sessionName } = useAuth();
+  const { battleUnsub } = useBattle();
+  const { turnUnsub } = useTurn();
 
   useEffect(() => {
     try {
@@ -43,6 +47,8 @@ export const Home = () => {
       charactersUnsub();
       auth();
       bestiaryUnsub();
+      battleUnsub();
+      turnUnsub()
     };
   });
 

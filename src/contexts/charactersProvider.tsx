@@ -15,7 +15,6 @@ export const CharactersProvider = ({ children }) => {
   const [characters, setCharacters] = useState<any>([]);
   const [bestiary, setBestiary] = useState<any>([]);
 
-
   const bestiaryUnsub = async () => {
     const q = query(collection(db, "PdMs"));
     onSnapshot(q, (querySnapShot) => {
@@ -34,7 +33,7 @@ export const CharactersProvider = ({ children }) => {
     onSnapshot(q, async (state) => {
       setCharacters([]);
       state.forEach((i) => {
-        setCharacters((prev:any) => [...prev, i.data()]);
+        setCharacters((prev: any) => [...prev, i.data()]);
       });
     });
   };
