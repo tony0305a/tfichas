@@ -121,10 +121,10 @@ export const MasterActionBar = ({ turn }) => {
                 meleeAttack(
                   turn.nome,
                   "Faceless",
-                  localStorage.getItem("PdMCustom"),
-                  localStorage.getItem("PdMCustomQnt"),
-                  localStorage.getItem("PdMCustomBa"),
-                  localStorage.getItem("PdMCustomDmg")
+                  localStorage.getItem("PdMWeapon"),
+                  localStorage.getItem("PdMWeaponQnt"),
+                  localStorage.getItem("PdMWeaponBa"),
+                  localStorage.getItem("PdMWeaponDmg")
                 );
               }}
             >
