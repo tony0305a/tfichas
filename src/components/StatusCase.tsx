@@ -24,7 +24,7 @@ export const StatusCase = ({ attr, num, mod, name }) => {
 
   return (
     <div>
-      <div className="bg-grey-900 border-[2px] border-white-500 drop-shadow-md flex flex-col items-center justify-center gap-1 w-18 rounded-t-md font-bold xl:w-28 ">
+      <div className="bg-grey-900 border-[2px] border-white-500 drop-shadow-md flex flex-col items-center justify-center gap-1 w-24 rounded-t-md font-bold xl:w-28 ">
         <span className="mx-1 text-xs xl:text-sm">{attr}</span>
         <div className="border-[1px] border-white-500  shadow-md drop-shadow-lgp-1 ">
           <span className=" text-lg mx-2 sm:text-sm ">{num}</span>
