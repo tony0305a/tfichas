@@ -5,6 +5,7 @@ import uuid from "react-uuid";
 
 export const EditCharacter = ({ usuario, item }) => {
   const [nome, setNome] = useState<any>(item.nome);
+  const [nivel,setNivel] = useState<any>(item.nivel)
   const [exp, setExp] = useState<any>(item.experiencia);
   const [expMeta, setExpMeta] = useState<any>(item.experienciaMeta);
   const [raca, setRaca] = useState<any>(item.raça);
@@ -45,6 +46,7 @@ export const EditCharacter = ({ usuario, item }) => {
   const editCharacter = (
     user: any,
     n: any,
+    nivel:any,
     e: any,
     r: any,
     c: any,
@@ -77,6 +79,7 @@ export const EditCharacter = ({ usuario, item }) => {
       belongsTo: user,
       nome: n,
       experiencia: e,
+      nivel:nivel,
       experienciaMeta: expMeta,
       raça: r,
       classe: c,
@@ -116,7 +119,7 @@ export const EditCharacter = ({ usuario, item }) => {
   return (
     <>
       {show ? (
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center">
           <div className="bg-red-900 p-2 rounded-t-md w-screen ">
             <span className="text-xs  p-2  font-bold md:text-sm lg:text-base">
               Editar Personagem
@@ -125,6 +128,7 @@ export const EditCharacter = ({ usuario, item }) => {
           <form className="flex flex-col  p-2">
             <div className="flex flex-row">
               <div className="flex flex-col mx-1 ">
+
                 <div className=" mt-4 flex flex-col ">
                   <span>Nome </span>
                   <input
@@ -134,6 +138,17 @@ export const EditCharacter = ({ usuario, item }) => {
                     onChange={(e) => setNome(e.target.value)}
                   />
                 </div>
+
+                <div className=" mt-4 flex flex-col ">
+                  <span>Nivel </span>
+                  <input
+                    defaultValue={nivel}
+                    className="bg-grey-700  w-32 "
+                    type="text"
+                    onChange={(e) => setNivel(e.target.value)}
+                  />
+                </div>
+
                 <div className=" mt-4 flex flex-col ">
                   <span>Experiência </span>
                   <input
@@ -361,15 +376,6 @@ export const EditCharacter = ({ usuario, item }) => {
                     />
                   </div>
                   <div className=" mt-4 flex flex-col ">
-                    <span>PV Atual</span>
-                    <input
-                      defaultValue={pva}
-                      className="bg-grey-700 w-8 px-1 "
-                      type="number"
-                      onChange={(e) => setPva(e.target.value)}
-                    />
-                  </div>
-                  <div className=" mt-4 flex flex-col ">
                     <span>Dana da arma (⚔️)</span>
                     <div className="flex flex-row">
                       <input
@@ -415,6 +421,7 @@ export const EditCharacter = ({ usuario, item }) => {
                 editCharacter(
                   usuario,
                   nome,
+                  nivel,
                   exp,
                   raca,
                   classe,

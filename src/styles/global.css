@@ -9,4 +9,7 @@
       margin: 0;
       -moz-appearance: textfield !important;
     }
+    html{
+      font-family: 'Alegreya', serif;
+    }
  }

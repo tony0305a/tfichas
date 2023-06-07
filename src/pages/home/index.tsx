@@ -21,11 +21,17 @@ import { useBestiary } from "../../contexts/bestiartProvider";
 import { useBattle } from "../../contexts/battleProvider";
 import { useTurn } from "../../contexts/turnProvider";
 import { useTargets } from "../../contexts/targetProvider";
+import { StatusCase } from "../../components/StatusCase";
+import { PvCase } from "../../components/PvCase";
+import { CaCase } from "../../components/CaCase";
+import { BaCase } from "../../components/BaCase";
+import { Jpcase } from "../../components/JpCase";
 
 export const Home = () => {
   const [diceBoard, setDiceboard] = useState<any>([]);
   const [show, setShow] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<boolean>(false);
+  const [showNotes, setShowNotes] = useState<boolean>(false);
   const [notes, setNotes] = useState<any>("");
   const navigate = useNavigate();
   const { charactersUnsub, characters } = useCharacters();
@@ -108,10 +114,18 @@ export const Home = () => {
     updateDoc(doc(db, "characters", i), { notes: notes });
   };
 
+  if (characters[0] == undefined) {
+    return (
+      <>
+        <NewCharacter usuario={localStorage.getItem("@login")} />
+      </>
+    );
+  }
+
   return (
-    <div className="w-screen h-screen bg-grey-900 justify-center text-grey-100 flex-col ">
-      <header className="w-screen flex flex-col items-center bg-grey-900">
-        <div className="flex flex-row w-screen h-100 bg-grey-800 items-center justify-between px-8">
+    <div className="w-screen h-screen bg-grey-800 justify-center text-grey-100 flex-col overflow-x-hidden ">
+      <header className="w-screen flex flex-col items-center bg-grey-800 ">
+        <div className="flex flex-row w-screen h-100 items-center justify-between px-8 bg-grey-900 border-b-[4px] border-red-900 ">
           <span className="text-xs md:text-sm lg:text-base">
             Logado como: {sessionName}
           </span>
@@ -121,6 +135,129 @@ export const Home = () => {
           >
             Sair
           </button>
+        </div>
+        <div className="bg-[#ecead5] text-grey-900 w-screen">
+          <div className="flex flex-row items-center justify-around ">
+            <div className="flex flex-row items-center gap-2">
+              <img src={characters[0].pic} className="w-28" />
+              <div className="flex flex-col">
+                <span className="font-bold">{characters[0].nome}</span>
+                <div className="flex flex-row">
+                  <span>{characters[0].raça}</span>
+                  <span>|</span>
+                  <span>{characters[0].classe}</span>
+                  <span>|</span>
+                  <span>{characters[0].alinhamento}</span>
+                </div>
+                <span className="font-bold">Nivel {characters[0].nivel}</span>
+                <span className="font-bold">{characters[0].experiencia}/{characters[0].experienciaMeta}</span>
+              </div>
+            </div>
+            <div className="flex flex-row gap-2 ">
+              <button
+                onClick={() => {
+                  if (showEdit) {
+                    setShowEdit(false);
+                  } else {
+                    setShowEdit(true);
+                  }
+                }}
+                className="bg-red px-2 py-1 text-white rounded-md"
+              >
+                Editar
+              </button>
+              <button
+                onClick={() => {
+                  if (showNotes) {
+                    setShowNotes(false);
+                  } else {
+                    setShowNotes(true);
+                  }
+                }}
+                className="bg-green-700 px-2 py-1 text-white rounded-md"
+              >
+                Notas
+              </button>
+            </div>
+          </div>
+        </div>
+        {showEdit ? (
+          <EditCharacter
+            item={characters[0]}
+            usuario={localStorage.getItem("@login")}
+          />
+        ) : (
+          <></>
+        )}
+        {showNotes ? (
+          <div className="w-screen  h-60  flex flex-col items-center lg:w-full xl:w-full p-3 bg-grey-800 ">
+            <textarea
+              defaultValue={characters[0].notes}
+              onChange={(e) => {
+                setNotes(e.target.value);
+                console.log(notes);
+              }}
+              className="bg-grey-700 w-screen h-full lg:w-full xl:w-full"
+            />
+            <button
+              onClick={() => {
+                addNote(characters[0].id, notes);
+              }}
+              className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
+            >
+              Salvar
+            </button>
+          </div>
+        ) : (
+          <></>
+        )}
+
+        <div className="flex flex-row mt-4 w-screen items-center justify-center flex-wrap gap-2 border-b-4 border-red-900 pb-2 bg-grey-800 ">
+          <StatusCase
+            attr={"Força"}
+            num={characters[0].força}
+            mod={getMod(characters[0].força)}
+            name={characters[0].nome}
+          />
+          <StatusCase
+            attr={"Destreza"}
+            num={characters[0].destreza}
+            mod={getMod(characters[0].destreza)}
+            name={characters[0].nome}
+          />
+          <StatusCase
+            attr={"Constituição"}
+            num={characters[0].constituicao}
+            mod={getMod(characters[0].constituicao)}
+            name={characters[0].nome}
+          />
+          <StatusCase
+            attr={"Inteligência"}
+            num={characters[0].inteligencia}
+            mod={getMod(characters[0].inteligencia)}
+            name={characters[0].nome}
+          />
+          <StatusCase
+            attr={"Sabedoria"}
+            num={characters[0].sabedoria}
+            mod={getMod(characters[0].sabedoria)}
+            name={characters[0].nome}
+          />
+          <StatusCase
+            attr={"Carisma"}
+            num={characters[0].carisma}
+            mod={getMod(characters[0].carisma)}
+            name={characters[0].nome}
+          />
+          <PvCase pv={characters[0].pv} pva={characters[0].pva} />
+          <CaCase ca={characters[0]} />
+          <BaCase ba={characters[0].ba} baD={characters[0].baD} />
+          <Jpcase
+            jpd={characters[0].jpd}
+            jpc={characters[0].jpc}
+            jps={characters[0].jps}
+            char={characters[0]}
+          />
         </div>
 
         <div className="w-screen h-full flex flex-row items-center justify-center ">
@@ -197,7 +334,7 @@ export const Home = () => {
           </div>
         </div>
 
-        <div className="  bg-grey-900 flex flex-col items-start w-screen  h-48 overflow-y-auto scroll-auto mt-8 p-4 rounded md:w-2/5 xl:w-2/5 ">
+        <div className="  bg-grey-900 flex flex-col items-start w-screen  h-48 overflow-y-auto scroll-auto mt-2  p-4 rounded md:w-2/5 xl:w-2/5">
           {rolls.map((item: any, index: any) =>
             index >= 1 ? (
               <span
@@ -219,7 +356,7 @@ export const Home = () => {
           )}
         </div>
       </header>
-      <div className="bg-grey-900 flex items-center justify-center">
+      <div className="bg-grey-900 flex items-center justify-center mt-4">
         <BattleList role={sessionRole} />
       </div>
       {sessionRole == 0 ? (
@@ -229,307 +366,6 @@ export const Home = () => {
       ) : (
         <></>
       )}
-
-      <div className="w-screen flex flex-col border-4 border-red-900 bg-grey-800 ">
-        <div className="bg-red-900 p-2 rounded-t-md w-screen ">
-          <span className="text-xs  p-2  font-bold md:text-sm lg:text-base">
-            Personagens
-          </span>
-        </div>
-        <div className="flex flex-row flex-wrap">
-          {characters != undefined ? (
-            <>
-              {characters.map((item: any, index: any) => (
-                <div
-                  key={index}
-                  className=" w-screen flex flex-col mt-2 m-1 rounded-t-md border-4 border-red-900 xl:w-2/5  "
-                >
-                  <div className="bg-red-900 flex flex-row w-screen lg:w-full xl:w-full ">
-                    <span className="text-xs p-2 font-bold md:text-sm lg:text-base">
-                      {item.nome}| Nv. {item.nivel} | {item.raça} |{" "}
-                      {item.classe} | {item.alinhamento} | {item.experiencia}/
-                      {item.experienciaMeta}
-                    </span>
-                  </div>
-                  <div className="flex flex-col">
-                    <img
-                      src={item.pic}
-                      className="border-1 border-red rounded-full m-1 w-[148px] h-[148px] self-center "
-                    />
-                    <div className="w-screen flex flex-row  justify-self-auto ">
-                      <div className="flex flex-col">
-                        <span className="text-xs  p-1  font-bold md:text-sm lg:text-base">
-                          Atributos
-                        </span>
-
-                        <div className="flex flex-row  items-center">
-                          <span className="text-xs p-1 md:text-sm lg:text-base">
-                            Força:{item.força}
-                            {"["}
-                            {getMod(item.força)}
-                            {"]"}
-                          </span>
-                          <button
-                            className="py-3 px-4 m-2 bg-red rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                            onClick={() =>
-                              attrTest("Força", item.força, item.nome)
-                            }
-                          >
-                            💪🏼
-                          </button>
-                        </div>
-                        <div className="flex flex-row  items-center">
-                          <span className="text-xs p-1 md:text-sm lg:text-base">
-                            Destreza:{item.destreza}
-                            {"["}
-                            {getMod(item.destreza)}
-                            {"]"}
-                          </span>
-                          <button
-                            className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                            onClick={() =>
-                              attrTest("Destreza", item.destreza, item.nome)
-                            }
-                          >
-                            🏹
-                          </button>
-                        </div>
-                        <div className="flex flex-row  items-center">
-                          <span className="text-xs p-1 md:text-sm lg:text-base">
-                            Constituição:{item.constituicao}
-                            {"["}
-                            {getMod(item.constituicao)}
-                            {"]"}
-                          </span>
-                          <button
-                            className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                            onClick={() =>
-                              attrTest(
-                                "Constituição",
-                                item.constituicao,
-                                item.nome
-                              )
-                            }
-                          >
-                            🗿
-                          </button>
-                        </div>
-                        <div className="flex flex-row  items-center">
-                          <span className="text-xs p-1 md:text-sm lg:text-base">
-                            Inteligência:{item.inteligencia}
-                            {"["}
-                            {getMod(item.inteligencia)}
-                            {"]"}
-                          </span>
-                          <button
-                            className="py-3 px-4 m-2 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                            onClick={() =>
-                              attrTest(
-                                "Inteligência",
-                                item.inteligencia,
-                                item.nome
-                              )
-                            }
-                          >
-                            🧠
-                          </button>
-                        </div>
-                        <div className="flex flex-row  items-center">
-                          <span className="text-xs p-1 md:text-sm lg:text-base">
-                            Sabedoria:{item.sabedoria}
-                            {"["}
-                            {getMod(item.sabedoria)}
-                            {"]"}
-                          </span>
-                          <button
-                            className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                            onClick={() =>
-                              attrTest("Sabedoria", item.sabedoria, item.nome)
-                            }
-                          >
-                            🦉
-                          </button>
-                        </div>
-                        <div className="flex flex-row  items-center">
-                          <span className="text-xs p-1 md:text-sm lg:text-base">
-                            Carisma:{item.carisma}
-                            {"["}
-                            {getMod(item.carisma)}
-                            {"]"}
-                          </span>
-                          <button
-                            className="py-3 px-4 m-2 bg-sky rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                            onClick={() =>
-                              attrTest("Carisma", item.carisma, item.nome)
-                            }
-                          >
-                            🗣️
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-row flex-wrap  ">
-                        <div className="flex flex-col flex-wrap ">
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            Est. de Combate
-                          </span>
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            (❤️)PV:DV({item.dv})+CON(
-                            {parseInt(item.constituicao) <= 8
-                              ? "-1"
-                              : parseInt(item.constituicao) <= 12
-                              ? "+0"
-                              : parseInt(item.constituicao) <= 14
-                              ? "+1"
-                              : parseInt(item.constituicao) <= 16
-                              ? "+2"
-                              : parseInt(item.constituicao) <= 18
-                              ? "+3"
-                              : "+4"}
-                            ):{item.pva}/{item.pv}
-                          </span>
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            (🛡️)CA({item.ca})+DES({getMod(item.destreza)})
-                          </span>
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            +ARMADURA({item.armadura})+ESCUDO({item.escudo})
-                          </span>
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            TOTAL(
-                            {parseInt(item.ca) +
-                              getMod(item.destreza) +
-                              parseInt(item.armadura) +
-                              parseInt(item.escudo)}
-                            )
-                          </span>
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            (⚔️)B.A: {item.ba}
-                          </span>
-                          <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                            (🏹)B.A: {item.baD}
-                          </span>
-
-                          <div>
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              JPD: {item.jpd}
-                            </span>
-                            <button
-                              onClick={() => {
-                                saveThorws(
-                                  "JPD",
-                                  item.destreza,
-                                  item.jpd,
-                                  item.nome
-                                );
-                              }}
-                              className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                            >
-                              🛡️
-                            </button>
-                          </div>
-                          <div>
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              JPC: {item.jpc}
-                            </span>
-                            <button
-                              onClick={() => {
-                                saveThorws(
-                                  "JPC",
-                                  item.constituicao,
-                                  item.jpc,
-                                  item.nome
-                                );
-                              }}
-                              className="py-3 px-4 m-2 bg-stone rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                            >
-                              🛡️
-                            </button>
-                          </div>
-                          <div>
-                            <span className="text-xs  p-1  font-bold md:text-sm lg:text-xm">
-                              JPS: {item.jps}
-                            </span>
-                            <button
-                              onClick={() => {
-                                saveThorws(
-                                  "JPS",
-                                  item.sabedoria,
-                                  item.jps,
-                                  item.nome
-                                );
-                              }}
-                              className="py-3 px-4 m-2 bg-cyan-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                            >
-                              🛡️
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-screen  h-60  flex flex-col items-center lg:w-full xl:w-full  ">
-                      <textarea
-                        defaultValue={item.notes}
-                        onChange={(e) => {
-                          setNotes(e.target.value);
-                          console.log(notes);
-                        }}
-                        className="bg-grey-700 w-screen h-full lg:w-full xl:w-full"
-                      />
-                      <button
-                        onClick={() => {
-                          addNote(item.id, notes);
-                        }}
-                        className="py-3 px-4 m-2 bg-green-500 rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                      >
-                        Salvar
-                      </button>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      if (showEdit) {
-                        setShowEdit(false);
-                      } else {
-                        setShowEdit(true);
-                      }
-                    }}
-                    className="py-3 px-4 bg-purple rounded font-semibold text-white text-sm transition-colors hover:bg-cyan-300 focus:ring-2 ring-white"
-                  >
-                    Editar
-                  </button>
-                  {showEdit ? (
-                    <EditCharacter
-                      usuario={localStorage.getItem("@login")}
-                      item={item}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              ))}
-            </>
-          ) : (
-            <></>
-          )}
-        </div>
-        <button
-          onClick={() => {
-            if (show) {
-              setShow(false);
-            } else {
-              setShow(true);
-            }
-          }}
-          className="py-3 px-2 m-2 bg-green-700 rounded font-semibold text-white text-sm transition-colors hover:bg-grenn-500 focus:ring-2 ring-white"
-        >
-          Novo
-        </button>
-        {show ? (
-          <NewCharacter usuario={localStorage.getItem("@login")} />
-        ) : (
-          <></>
-        )}
-      </div>
     </div>
   );
 };
