@@ -116,9 +116,9 @@ export const Home = () => {
 
   if (characters[0] == undefined) {
     return (
-      <>
+      <div className="bg-grey-800 text-white" >
         <NewCharacter usuario={localStorage.getItem("@login")} />
-      </>
+      </div>
     );
   }
 

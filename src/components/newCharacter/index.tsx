@@ -101,7 +101,7 @@ export const NewCharacter = ({ usuario}) => {
   return (
     <>
       {show ? (
-        <div className="flex flex-col items-center mt-8">
+        <div className="flex flex-col items-center mt-8 bg-grey-800 ">
           <div className="bg-red-900 p-2 rounded-t-md w-screen ">
             <span className="text-xs  p-2  font-bold md:text-sm lg:text-base">
               Novo personagem
