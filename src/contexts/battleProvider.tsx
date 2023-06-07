@@ -7,6 +7,7 @@ import {
   getDocs,
   updateDoc,
   where,
+  orderBy,
 } from "firebase/firestore";
 import { createContext, useCallback, useContext, useState } from "react";
 import { db } from "../firestore";
@@ -45,7 +46,7 @@ export const BattleProvider = ({ children }) => {
   const { rollDx, logRoll, getMod } = useEtc();
 
   const battleUnsub = async () => {
-    const q = query(collection(db, "battle"));
+    const q = query(collection(db, "battle"),orderBy("iniciativa","desc"));
     onSnapshot(q, (stateQuery) => {
       setBattlePart([]);
       stateQuery.forEach((doc) => {
