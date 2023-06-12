@@ -26,6 +26,7 @@ import { PvCase } from "../../components/PvCase";
 import { CaCase } from "../../components/CaCase";
 import { BaCase } from "../../components/BaCase";
 import { Jpcase } from "../../components/JpCase";
+import { Inventory } from "../../components/inventory";
 
 export const Home = () => {
   const [diceBoard, setDiceboard] = useState<any>([]);
@@ -139,7 +140,7 @@ export const Home = () => {
         <div className="bg-[#ecead5] text-grey-900 w-screen">
           <div className="flex flex-row items-center justify-around ">
             <div className="flex flex-row items-center gap-2">
-              <img src={characters[0].pic} className="w-28" />
+              <img src={characters[0].pic} className="rounded-full m-2 w-[28px] h-[28px] " />
               <div className="flex flex-col">
                 <span className="font-bold">{characters[0].nome}</span>
                 <div className="flex flex-row">
