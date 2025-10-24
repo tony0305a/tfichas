@@ -10,6 +10,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { Create } from "./pages/create";
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
+import { Did } from "./pages/did";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: "/create",
     element: <Create />,
+  },
+  {
+    path: "/d&d",
+    element: <Did />,
   },
 ]);
 
